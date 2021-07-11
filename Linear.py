@@ -500,9 +500,13 @@ if variable_dict["done"]:
         betap = min(1, optionp)
         betad = min(1, optiond)
         l_string = "\\beta_P = \\text{min}\\{1, 0.9*\\text{min}\\} "
+        empty = True
         for i in range(n_full):
             if dx_r[i] < 0:
+                empty = False
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
+        if empty:
+            l_string += "\\phi "
         l_string = l_string[:-1] + "\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
         st.latex(l_string)
         l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\} "
