@@ -109,7 +109,7 @@ if m_s > 0 and n_s > 0:
     col = st.beta_columns(2)
     with col[0]:
         st.latex("A = " + sympy.latex(sympy.Matrix(matrix_small)))
-    st.write("Enter vectors using spaces between entries, e.g.,\"1 4.1 3 2.0\".")
+    st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
     col = st.beta_columns(2)
     # col_help = 0
     with col[0]:
@@ -217,6 +217,7 @@ if variable_dict["done"]:  #Once solve is pressed
         st.latex("A = " + sympy.latex(sympy.Matrix(matrix_full)))
     col = st.beta_columns(5)
     col_helper1 = 0
+    st.write([type(i) for i in [b, c_full, w, x_full, y]])
     var = [sympy.Matrix(i) for i in [b, c_full, w, x_full, y]]
     names = ["b", "c", "w", "x", "y"]
     for i in range(5):
@@ -497,7 +498,7 @@ if variable_dict["done"]:
                             st.latex(matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
                             col_help += 2
                         else:
-                            with col[1]:
+                            with col[0]:
                                 st.latex(matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
                     elif i == 7:
                         if m_s < 6:
@@ -505,7 +506,7 @@ if variable_dict["done"]:
                                 sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
                             col_help += 1
                         else:
-                            with col[1]:
+                            with col[0]:
                                 st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
                                     sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
                             col_help = 0
