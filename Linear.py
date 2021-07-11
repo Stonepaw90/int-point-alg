@@ -483,7 +483,7 @@ if variable_dict["done"]:
                 pass
             elif i == 5:
                 with col[1]:
-                    st.latex("$v(\mu)$ = " + lt(mu * np.ones(n_full))
+                    st.latex("v(\mu) = " + lt(mu * np.ones(n_full))
                              + lt(diagx.dot(diagw).dot(np.ones(n_full))) + "= " + lt(vmu))
                 col_help = 0
                 #v(\mu) = [values of \mu1] – [values of XW1] = [values of v]
