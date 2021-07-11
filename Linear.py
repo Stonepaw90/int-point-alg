@@ -506,7 +506,7 @@ if variable_dict["done"]:
                 empty = False
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
         if empty:
-            l_string += "\\phi "
+            l_string = l_string[:-3] + "\\{\\phi "
         l_string = l_string[:-1] + "\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
         st.latex(l_string)
         l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\} "
