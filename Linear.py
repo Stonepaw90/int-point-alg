@@ -168,6 +168,16 @@ if variable_dict["done"]:  #Once solve is pressed
         matrix_full = matrix_small
         x_full = x
         c_full = c
+        st.write(matrix_full.dot(x_full))
+        st.write(b)
+        try:
+            assert matrix_full.dot(x_full) == b
+        except:
+            st.latex("\\text{Ensure } Ax = b.")
+            st.write("1")
+        if not matrix_full.dot(x_full) == b:
+            st.latex("\\text{Ensure } Ax = b.")
+            st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
             # x_full = np.concatenate((x,s))
             # c_full = np.concatenate((c, np.zeros(m_s)))
@@ -301,7 +311,8 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
     st.table(df)
     #st.markdown("Note: Unlike table 11.2, in this table, the $\mu$ used in each row was used to compute that row")
     #st.markdown("Note: Unlike table 11.2, the $\mu$ used on each row of this table was used to compute that row.")
-    st.markdown("Note: In this table each row is used to compute the next row, which differs from table 11.2 which places each $\mu$ on the row it computes.")
+    #st.markdown("Note: In this table each row is used to compute the next row, which differs from table 11.2 which places each $\mu$ on the row it computes.")
+    st.markdown("Note: In this table the $\mu$ in a row is used to compute the next row, while Table 11.2 reports $\mu$ in the row it was used to compute.")
     col_help = 0
 
 
