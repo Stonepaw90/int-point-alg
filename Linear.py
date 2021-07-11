@@ -121,7 +121,7 @@ if m_s > 0 and n_s > 0:
         c = np.array([float(i) for i in
                       st.text_input(f"Objective function coefficients c (a {n_s}-vector)", value=default_var[1]).split(
                           " ") if i]) #1 2 0 0
-    #st.header("Initial solution")
+    st.header("Initial solution")
     col = st.beta_columns(2)
     with col[0]:
         x = np.array([float(i) for i in
@@ -134,16 +134,16 @@ if m_s > 0 and n_s > 0:
     with col[0]:
         st.write(r"""$\alpha$: Step size parameter.""")
         alpha = st.number_input(r"""""", value=0.9, step=0.01, min_value=0.0, max_value=0.999,
-                                help=r"""Ensures each variable is reduced by no more than a factor of $1 - \alpha$. 0 < \alpha < 1""")
+                                help=r"""Ensures each variable is reduced by no more than a factor of $1 - \alpha$. $0 < \alpha < 1$""")
         st.write("""$\gamma$: Duality gap parameter.""")
         gamma = st.number_input(r"""""", value=0.25, step=0.01,
-                                help=r"""The complimentary slackness parameter $\mu$ is multiplied by $\gamma$ each iteration such that $\mu \rightarrow 0$. 0 < \gamma < 1""")
+                                help=r"""The complimentary slackness parameter $\mu$ is multiplied by $\gamma$ each iteration such that $\mu \rightarrow 0$. $0 < \gamma < 1$""")
     with col[1]:
         st.write("""$\epsilon$: Optimality tolerance.""")
         epsilon = st.number_input(r"""""", value=0.01, step=0.001, format="%f", min_value=0.00001,
-                                  help=r"""Stop the algorithm once **x**$^T$**w**$< \epsilon$. \epsilon > 0""")
+                                  help=r"""Stop the algorithm once **x**$^T$**w**$< \epsilon$. $\epsilon > 0$""")
         st.write("""$\mu$: Initial complementary slackness parameter.""")
-        mu = st.number_input("", value=5.0, step=0.1, help = r"""\mu > 0""") #0.25
+        mu = st.number_input("", value=5.0, step=0.1, help = r"""$\mu > 0$""") #0.25
     variable_dict["done"] = st.checkbox("Solve")
 
 
@@ -168,7 +168,7 @@ if variable_dict["done"]:  #Once solve is pressed
         matrix_full = matrix_small
         x_full = x
         c_full = c
-        if any([abs(i) > 0.0001 for i in (matrix_full.dot(x_full) - b)]):
+        if not all([abs(i) > 0.0001 for i in matrix_full.dot(x_full) - b]):
             st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*matrix_full.dot(x_full))} \\neq {str(*b)}")
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
@@ -269,7 +269,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         betad = min(1, min([alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 1000 for i in range(n_full)]]))
         x_full += betap * dx
         y += betad * dy
-        
+
         st.write(y)
         st.write(y[0])
         st.write(type(y))
@@ -284,8 +284,8 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         f = x_full.dot(c_full)
 
         if not variable_dict["standard"]:
-            if not all([abs(i) > 0.0001 for i in matrix_full.dot(x_full) - b]):
-                st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*matrix_full.dot(x_full))} \\neq {str(*b)}")
+            if any([abs(i) > 0.0001 for i in (matrix_full.dot(x_full) - b)]):
+                st.latex(f"Ax \\neq b, \hspace{{8px}} {str(round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
                 df = pd.DataFrame(data, columns=alist)
                 st.markdown("""
                     <style>
