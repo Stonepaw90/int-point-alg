@@ -229,8 +229,11 @@ def round_list(list, make_tuple=False):
             try:
                 for j in range(len(list[i])):
                     list[i][j] = round(list[i][j], 4)
-                if make_tuple and len(list[i]) > 1:
-                    list[i] = tuple(list[i])
+                if make_tuple:
+                    if len(list[i]) > 1:
+                        list[i] = tuple(list[i])
+                    else:
+                        list[i] = float(list[i][0])
             except:
                 pass
         else:
