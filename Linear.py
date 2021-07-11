@@ -141,7 +141,7 @@ if m_s > 0 and n_s > 0:
     with col[1]:
         st.write("""$\epsilon$: Optimality tolerance.""")
         epsilon = st.number_input(r"""""", value=0.01, step=0.001, format="%f", min_value=0.00001,
-                                  help=r"""Stop the algorithm once **x**$^T$**w**$< \epsilon$. $\hspace{13px} \epsilon > 0$""")
+                                  help=r"""Stop the algorithm once $x^Tw< \epsilon$. $\hspace{13px} \epsilon > 0$""")
         st.write("""$\mu$: Initial complementary slackness parameter.""")
         mu = st.number_input("", value=5.0, step=0.1, help = r"""$\mu > 0$""") #0.25
     variable_dict["done"] = st.checkbox("Solve")
