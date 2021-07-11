@@ -483,8 +483,11 @@ if variable_dict["done"]:
                 pass
             elif i == 5:
                 with col[1]:
-                    st.latex("v(\mu) = " + lt(mu * np.ones(n_full)) + "-"
-                             + lt(diagx.dot(diagw).dot(np.ones(n_full))) + "= " + lt(vmu))
+                    muone = lt(round_list(mu * np.ones(n_full)))
+                    xwone = lt(round_list(diagx.dot(diagw).dot(np.ones(n_full))))
+                    vmulatex = lt(round_list(vmu))
+                    st.latex("v(\mu) = " + muone + "-"
+                             + xwone + "= " + vmulatex)
                 col_help = 0
                 #v(\mu) = [values of \mu1] – [values of XW1] = [values of v]
             elif i in [0, 1, 2, 6, 7]:
