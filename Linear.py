@@ -83,6 +83,13 @@ with col[0]:
         defaultWidth=width,
         fit_columns_on_grid_load=False,
         key=matrix_key)
+    gridOptions = {
+        floatingFilter: true
+        columnDefs:[{
+            suppressMenu: true,
+            floatingFilterComponentParams: {suppressFilterButton:true}
+         }]
+    }
 # Convert Matrix, catching errors. Errors lead to a stop that prints out the matrix and your matrix shape (m_s, n_s).
 try:
     messy_matrix = response['data'].replace("nan", "")
