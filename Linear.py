@@ -42,7 +42,8 @@ st.write(
     "Strict feasibility for the primal requires $\\bar{x}>0, s>0$. Strict feasibility for the dual requires $w > 0$.")
 st.write(
     "Enter the problem, strictly feasible initial solutions, and parameters.")
-
+def lt(x):
+    return (sympy.latex(sympy.Matrix(x)))
 
 # You can choose if standard or not standard.
 variable_dict['standard'] = st.checkbox("Standard form", value=False)
@@ -171,7 +172,7 @@ if variable_dict["done"]:  #Once solve is pressed
         x_full = x
         c_full = c
         if any([abs(i) > 0.001 for i in (matrix_full.dot(x_full) - b)]):
-            st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
+            st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(matrix_full.dot(x_full))) + f"\\neq" + lt(b))
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
             # x_full = np.concatenate((x,s))
@@ -284,7 +285,8 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
 
         if not variable_dict["standard"]:
             if any([abs(i) > 0.001 for i in (matrix_full.dot(x_full) - b)]):
-                st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
+                st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(matrix_full.dot(x_full))) + f"\\neq" + lt(b))
+                #st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
                 df = pd.DataFrame(data, columns=alist)
                 st.markdown("""
                     <style>
@@ -415,8 +417,7 @@ def digit_fix(subs):
     return (subs)
 
 
-def lt(x):
-    return (sympy.latex(sympy.Matrix(x)))
+
 
 
 #if st.button("Detailed output of all iterations.") and variable_dict["done"]:
