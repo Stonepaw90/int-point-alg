@@ -85,7 +85,8 @@ with col[0]:
         key=matrix_key)
     gridOptions = {
         floatingFilter: true
-        columnDefs:[{
+        columnDefs:
+        [{
             suppressMenu: true,
             floatingFilterComponentParams: {suppressFilterButton:true}
          }]
