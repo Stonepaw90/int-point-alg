@@ -267,7 +267,11 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         # diagwinv = np.linalg.inv(diagw)
         diagwinv = np.array([1 / i if i != 0 else 0 for i in np.nditer(diagw)]).reshape((n_full, n_full))
         vmu = mu * np.ones(n_full) - diagx.dot(diagw).dot(np.ones(n_full))
-        dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
+        try:
+            dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
+        except:
+            st.latex("\\mathbf{AX}\\mathbf{W}^{-1}\\mathbf{A}^T \\text{ Could not be inverted. Perhaps your coefficient matrix is singular.}")
+            st.stop()
         dw = matrix_full.T.dot(dy)
         dx = diagwinv.dot(vmu - diagx.dot(dw))
         betap = min(1, min([alpha * j for j in [-x_full[i] / dx[i] if dx[i] < 0 else 1000 for i in range(n_full)]]))
