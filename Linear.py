@@ -217,8 +217,7 @@ if variable_dict["done"]:  #Once solve is pressed
         st.latex("A = " + sympy.latex(sympy.Matrix(matrix_full)))
     col = st.beta_columns(5)
     col_helper1 = 0
-    st.write([type(i) for i in [b, c_full, w, x_full, y]])
-    var = [sympy.Matrix(i) for i in [b, c_full, w, x_full, y]]
+    var = [sympy.Matrix(round_list(i)) for i in [b, c_full, w, x_full, y]]
     names = ["b", "c", "w", "x", "y"]
     for i in range(5):
         with col[col_helper1 % 5]:
