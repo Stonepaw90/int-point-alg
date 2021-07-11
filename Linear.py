@@ -230,10 +230,10 @@ def round_list(list, make_tuple=False):
                 for j in range(len(list[i])):
                     list[i][j] = round(list[i][j], 4)
                 if make_tuple:
-                    #if len(list[i] == 1):
-                    #    list[i] = (list[i])
-                    #else:
-                    list[i] = tuple(list[i])
+                    if len(list[i] == 1):
+                        list[i] = tuple([list[i]])
+                    else:
+                        list[i] = tuple(list[i])
             except:
                 pass
         else:
