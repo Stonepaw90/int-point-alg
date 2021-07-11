@@ -231,7 +231,8 @@ def round_list(list, make_tuple=False):
                     list[i][j] = round(list[i][j], 4)
                 if make_tuple:
                     if len(list[i] == 1):
-                        list[i] = tuple([list[i]])
+                        st.write(list[i])
+                        list[i] = tuple(list[i]])
                     else:
                         list[i] = tuple(list[i])
             except:
