@@ -168,7 +168,7 @@ if variable_dict["done"]:  #Once solve is pressed
         matrix_full = matrix_small
         x_full = x
         c_full = c
-        if matrix_full.dot(x_full) != b:
+        if not all([abs(i) > 0.0001 for i in matrix_full.dot(x_full) - b]):
             st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*matrix_full.dot(x_full))} \\neq {str(*b)}")
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
@@ -269,6 +269,11 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         betad = min(1, min([alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 1000 for i in range(n_full)]]))
         x_full += betap * dx
         y += betad * dy
+        
+        st.write(y)
+        st.write(y[0])
+        st.write(type(y))
+        st.write(type(y[0]))
         w += betad * dw
         if variable_dict["update 11.26"]:
             mu = gamma * x_full.dot(w) / (m_s + n_s)
@@ -277,10 +282,29 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
 
         iter += 1
         f = x_full.dot(c_full)
+
+        if not variable_dict["standard"]:
+            if not all([abs(i) > 0.0001 for i in matrix_full.dot(x_full) - b]):
+                st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*matrix_full.dot(x_full))} \\neq {str(*b)}")
+                df = pd.DataFrame(data, columns=alist)
+                st.markdown("""
+                    <style>
+                    table td:nth-child(1) {
+                        display: none
+                    }
+                    table th:nth-child(1) {
+                        display: none
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
+                # st.dataframe(df)
+                st.table(df)
+                st.stop()
+
         if variable_dict["advanced"]:
-            if variable_dict["standard"]:
+            if variable_dict["standard"]: #Advanced, standard
                 data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
-            else:
+            else: #Advanced, canonical
                 data.append(round_list([iter, mu, x_full.dot(w), f, x_full, y, w], make_tuple=True))
         else:
             if variable_dict["standard"]:  # Not Advanced, and Standard
