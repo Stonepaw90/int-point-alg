@@ -461,21 +461,33 @@ if variable_dict["done"]:
         #                 "\mu\\mathbf{1}", "\\mathbf{XW1}", "\\mathbf{v}(\\mu)",
         #                 "A", "\\mathbf{AX}\\mathbf{W}^{-1}\\mathbf{A}^T",
         #                 "\\mathbf{d}^x", "\\mathbf{d}^y", "\\mathbf{d}^w"]
+        #matrix_string = ["X", "W", "XW^{-1}",
+        #                 "\mu1", "XW1", "v(\\mu)",
+        #                 "A", "AXW^{-1}A^T",
+        #                 "d^x", "d^y", "d^w"]
         matrix_string = ["X", "W", "XW^{-1}",
-                         "\mu1", "XW1", "v(\\mu)",
+                         None, None, "v(\\mu)",
                          "A", "AXW^{-1}A^T",
                          "d^x", "d^y", "d^w"]
         complicated_eq = matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)
         matrix_list = round_list([np.diagflat([round(i, 4) for i in x_full]), np.diagflat([round(i, 4) for i in w]),
                                   diagx.dot(diagwinv).round(4),
-                                  mu * np.ones(n_full), diagx.dot(diagw).dot(np.ones(n_full)), vmu,
+                                  #mu * np.ones(n_full), diagx.dot(diagw).dot(np.ones(n_full)), vmu,
+                                  None, None, None,
                                   matrix_full, complicated_eq, dx, dy, dw], False)
         st.markdown("### $k= "+str(iter) + "$")
         col = st.beta_columns(3)
         for i in range(len(matrix_string)):
             # col_help += 1
-
-            if i in [0, 1, 2, 6, 7]:
+            if i in [3,4]:
+                pass
+            elif i == 5:
+                with col[1]:
+                    st.latex("$v(\mu)$ = " + lt(mu * np.ones(n_full))
+                             + lt(diagx.dot(diagw).dot(np.ones(n_full))) + "= " + lt(vmu))
+                col_help = 0
+                #v(\mu) = [values of \mu1] – [values of XW1] = [values of v]
+            elif i in [0, 1, 2, 6, 7]:
                 with col[col_help % 3]:
                     if i == 6:
                         if m_s < 6:
