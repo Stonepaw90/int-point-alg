@@ -65,7 +65,7 @@ if option == 1:
     g2 = -x2 + x1 ** (1.5)
     g = sympy.Matrix([g1, g2])
     b = sympy.Matrix([0, 0])
-    alist = ["k", "mu", "x1", "x2", "y1", "y2", "f(x)", "lambda", "d^x", """l*||d^x||"""]
+    alist = ["k", "mu", "x1", "x2", "y1", "y2", "f(x)", "lambda", "d^x", """lambda*||d^x||"""]
     st.write("Please write your (feasible) initial point.")
     col1, col2, col3, col4, col5 = st.beta_columns(5)
     #while not (variable_dict["feasible"] and variable_dict["pos"]):
@@ -75,10 +75,10 @@ if option == 1:
     x1_input = col1.number_input(value = 0.5, label = "", key = "x1")
     col2.write(r"""$x_2$""")
     x2_input = col2.number_input(value = 0.6, label = "", key = "x2")
-    col3.write(r"""$y_1 \geq 0$""")
-    y1_input = col3.number_input(value = 5.0, label = "", min_value = 0.0, key = "y1")
-    col4.write(r"""$y_2 \geq 0$""")
-    y2_input = col4.number_input(value = 10.0, label = "", min_value = 0.0, key = "y2")
+    col3.write(r"""$y_1 > 0$""")
+    y1_input = col3.number_input(value = 5.0, label = "", min_value = 0.0001, key = "y1")
+    col4.write(r"""$y_2 > 0$""")
+    y2_input = col4.number_input(value = 10.0, label = "", min_value = 0.0001, key = "y2")
     col5.write(r"""$\mu > 0$""")
     mu_input = col5.number_input(value = 1.0, label = "", min_value=0.001, key = "mu")
     mu_value = float(mu_input)
@@ -101,7 +101,7 @@ elif option == 2:
     g1 = x
     g = sympy.Matrix([g1])
     b = sympy.Matrix([2])
-    alist = ["k", "mu", "x", "y", "f(x)", "lambda", "d^x", "l*||d^x||"]
+    alist = ["k", "mu", "x", "y", "f(x)", "lambda", "d^x", "lambda*||d^x||"]
     st.write("Please write your (feasible) initial point.")
     col11, col12, col13 = st.beta_columns(3)
     point = [1, 1]
@@ -109,7 +109,7 @@ elif option == 2:
     error_found = not all([i >= 0 for i in s])
     col11.write(r"""$x$""")
     x_input = col11.number_input(value = 1.0, label = "", key = "x")
-    col12.write(r"""$y \geq 0$""")
+    col12.write(r"""$y > 0$""")
     y_input = col12.number_input(value = 0.5, label = "", key = "y", min_value=0.001)
     col13.write(r"""$\mu > 0$""")
     mu_input = col13.number_input(value = 2.0, label = "", min_value = 0.0, key = "mu2")
@@ -245,9 +245,9 @@ if st.button("Show equations."):
                  st.latex(j + " = " + sympy.latex(i))
     st.write("Equation 15.14 is:")
     if option == 2:
-        st.latex(sympy.latex(LHS) + sympy.latex(sympy.Matrix(["d^x", "d_y"])) + "= " + sympy.latex(RHS))
+        st.latex(sympy.latex(LHS) + sympy.latex(sympy.Matrix(["d^x", "d^y"])) + "= " + sympy.latex(RHS))
         st.write("With solution:")
-        st.latex(sympy.latex(sympy.Matrix(["d^x", "d_y"])) + " = " + sympy.latex(solv))
+        st.latex(sympy.latex(sympy.Matrix(["d^x", "d^y"])) + " = " + sympy.latex(solv))
     else:
         st.latex(
             sympy.latex(LHS) + sympy.latex(sympy.Matrix(["d_1^x", "d_2^x", "d_1^y", "d_2^y"])) + "= " + sympy.latex(
@@ -353,11 +353,11 @@ if st.button("Details of one iteration."):
     if option == 1:
         st.latex(sympy.latex(sympy.Matrix(["d_1^x", "d_2^x", "d_1^y", "d_2^y"])) + "= " + sympy.latex(solv_temp))
     else:
-        st.latex(sympy.latex(sympy.Matrix(["d^x", "d_y"])) + "= " + sympy.latex(solv_temp))
+        st.latex(sympy.latex(sympy.Matrix(["d^x", "d^y"])) + "= " + sympy.latex(solv_temp))
 
 if st.button(f"Details of all remaining {k - 1} iterations."):
 
-    df1 = df.drop(columns=['k', 'l*||d^x||', 'lambda', 'f(x)', "d^x"])
+    df1 = df.drop(columns=['k', 'lambda*||d^x||', 'lambda', 'f(x)', "d^x"])
     for index, df_row in df1.iterrows():
         if index == 0:
             mu_value = float(mu_input)
@@ -401,6 +401,10 @@ if st.button(f"Details of all remaining {k - 1} iterations."):
         RHS_subs = digit_fix(RHS_subs)
         st.latex(sympy.latex(RHS_subs))
         st.write("The solution to this is:")
+
         solv_temp = digit_fix(LHS_subs.LUsolve(RHS_subs))
-        st.latex(sympy.latex(solv_temp))
+        if option == 2:
+            st.latex(sympy.latex(sympy.Matrix(["d^x", "d^y"])) + " = " + sympy.latex(solv_temp))
+        else:
+            st.latex(sympy.latex(sympy.Matrix(["d_1^x", "d_2^x", "d_1^y", "d_2^y"])) + "= " + sympy.latex(solv_temp))
         st.markdown("""---""")
