@@ -168,10 +168,8 @@ if variable_dict["done"]:  #Once solve is pressed
         matrix_full = matrix_small
         x_full = x
         c_full = c
-        st.write(matrix_full.dot(x_full))
-        st.write(b)
         if matrix_full.dot(x_full) != b:
-            st.latex(f"\\text{{Error: }} Ax \\neq b, ({str(matrix_full.dot(x_full))} \\neq {str(b)})")
+            st.latex(f"Ax \\neq b, {str(*matrix_full.dot(x_full))} \\neq {str(*b)}")
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
             # x_full = np.concatenate((x,s))
