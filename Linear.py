@@ -73,7 +73,8 @@ st.write(
 col = st.beta_columns(2)
 with col[0]:
     gb = GridOptionsBuilder.from_dataframe(input_dataframe)
-    gb.configure_default_column(editable=True, filter = False, sortable = False, height = 3000)
+    gb.configure_default_column(editable=True, filter = False, sortable = False, suppressMenu: true,
+            floatingFilterComponentParams: {suppressFilterButton:true})
     gb.configure_grid_options(
         editable=True,
         sortable=False,
@@ -81,14 +82,18 @@ with col[0]:
         #enableFilter=False,
         resizable=True,
         defaultWidth=width,
+        suppressMenu: true,
+            floatingFilterComponentParams: {suppressFilterButton:true},
         fit_columns_on_grid_load=False,
         key=matrix_key)
     gridOptions = gb.build()
     response = AgGrid(
         input_dataframe,
-        #height=grid_height,
+        height=grid_height,
         width='100%',
         gridOptions = gridOptions,
+        suppressMenu: true,
+            floatingFilterComponentParams: {suppressFilterButton:true},
         #editable=True,
         #filter = False,
         #sortable=False,
