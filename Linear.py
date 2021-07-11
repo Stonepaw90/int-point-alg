@@ -230,10 +230,10 @@ def round_list(list, make_tuple=False):
                 for j in range(len(list[i])):
                     list[i][j] = round(list[i][j], 4)
                 if make_tuple:
-                    if len(list[i] == 1):
-                        list[i] = (list[i])
-                    else:
-                        list[i] = tuple(list[i])
+                    #if len(list[i] == 1):
+                    #    list[i] = (list[i])
+                    #else:
+                    list[i] = tuple(list[i])
             except:
                 pass
         else:
@@ -273,7 +273,6 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         betad = min(1, min([alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 1000 for i in range(n_full)]]))
         x_full += betap * dx
         y += betad * dy
-        st.write(round_list(y, make_tuple=True))
         w += betad * dw
         if variable_dict["update 11.26"]:
             mu = gamma * x_full.dot(w) / (m_s + n_s)
