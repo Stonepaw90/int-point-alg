@@ -287,7 +287,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
 
         if not variable_dict["standard"]:
             if any([abs(i) > 0.0001 for i in (matrix_full.dot(x_full) - b)]):
-                st.latex(f"Ax \\neq b, \hspace{{8px}} {str(round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
+                st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
                 df = pd.DataFrame(data, columns=alist)
                 st.markdown("""
                     <style>
