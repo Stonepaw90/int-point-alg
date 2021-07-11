@@ -73,7 +73,7 @@ st.write(
 col = st.beta_columns(2)
 with col[0]:
     gb = GridOptionsBuilder.from_dataframe(input_dataframe)
-    gb.configure_default_column(editable=True, filter = False, sortable = False, height = 100)
+    gb.configure_default_column(editable=True, filter = False, sortable = False, height = 3000)
     gb.configure_grid_options(
         editable=True,
         sortable=False,
