@@ -170,8 +170,8 @@ if variable_dict["done"]:  #Once solve is pressed
         matrix_full = matrix_small
         x_full = x
         c_full = c
-        if not all([abs(i) > 0.0001 for i in matrix_full.dot(x_full) - b]):
-            st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*matrix_full.dot(x_full))} \\neq {str(*b)}")
+        if any([abs(i) > 0.0001 for i in (matrix_full.dot(x_full) - b)]):
+            st.latex(f"Ax \\neq b, \hspace{{8px}} {str(round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
             # x_full = np.concatenate((x,s))
@@ -271,7 +271,6 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         betad = min(1, min([alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 1000 for i in range(n_full)]]))
         x_full += betap * dx
         y += betad * dy
-
         st.write(y)
         st.write(y[0])
         st.write(type(y))
@@ -506,16 +505,12 @@ if variable_dict["done"]:
         for i in range(n_full):
             if dx_r[i] < 0:
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
-
-        #l_string = l_string[:-1] + f") = \\text{{min}}(1, {round(optionp, 4)}) = {round(betap, 4)}"
         l_string = l_string[:-1] + "\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
-
         st.latex(l_string)
         l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\{"
         for i in range(n_full):
             if dw_r[i] < 0:
                 l_string += "\\frac{" + str(w_r[i]) + "}{" + str(-dw_r[i]) + "},"
-        #l_string = l_string[:-1] + f"}} = \\text{{min}}{{1, {round(optiond, 4)}}} = {round(betad, 4)}"
         l_string = l_string[:-1] + "\\} = \\text{min}\\{1, " + f"{round(optiond, 4)}" + "\\} = " + f"{round(betad, 4)}"
         st.latex(l_string)
         col = st.beta_columns(3)
