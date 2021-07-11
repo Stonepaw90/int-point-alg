@@ -71,6 +71,7 @@ st.markdown("Write your matrix in the top-left of this entry grid. The maximum s
 st.write(
     "Press enter or tab to confirm your edits.")
 col = st.beta_columns(2)
+5 - 3
 with col[0]:
     response = AgGrid(
         input_dataframe,
@@ -190,6 +191,12 @@ if variable_dict["done"]:  #Once solve is pressed
         matrix_full = matrix_small
         x_full = x
         c_full = c
+        try:
+            if len(matrix_full.dot(x_full) - b) == 1337:
+                pass
+        except:
+            st.write("The given vectors have incorrect dimensions.")
+            st.stop()
         if any([abs(i) > 0.001 for i in (matrix_full.dot(x_full) - b)]):
             st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(matrix_full.dot(x_full))) + f"\\neq" + lt(b))
             st.stop()
@@ -270,7 +277,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         try:
             dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
         except:
-            st.latex("\\mathbf{AX}\\mathbf{W}^{-1}\\mathbf{A}^T \\text{ Could not be inverted. Perhaps your coefficient matrix is singular.}")
+            st.latex("AXW^{-1}A^T \\text{ Could not be inverted. Perhaps your coefficient matrix is singular.}")
             st.stop()
         dw = matrix_full.T.dot(dy)
         dx = diagwinv.dot(vmu - diagx.dot(dw))
@@ -450,10 +457,10 @@ if variable_dict["done"]:
         dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
         dw = matrix_full.T.dot(dy)
         dx = diagwinv.dot(vmu - diagx.dot(dw))
-        matrix_string = ["\\mathbf{X}", "\\mathbf{W}", "\\mathbf{X}\\mathbf{W}^{-1}",
-                         "\mu\\mathbf{1}", "\\mathbf{XW1}", "\\mathbf{v}(\\mu)",
-                         "A", "\\mathbf{AX}\\mathbf{W}^{-1}\\mathbf{A}^T",
-                         "\\mathbf{d}^x", "\\mathbf{d}^y", "\\mathbf{d}^w"]
+        #matrix_string = ["\\mathbf{X}", "\\mathbf{W}", "\\mathbf{X}\\mathbf{W}^{-1}",
+        #                 "\mu\\mathbf{1}", "\\mathbf{XW1}", "\\mathbf{v}(\\mu)",
+        #                 "A", "\\mathbf{AX}\\mathbf{W}^{-1}\\mathbf{A}^T",
+        #                 "\\mathbf{d}^x", "\\mathbf{d}^y", "\\mathbf{d}^w"]
         matrix_string = ["X", "W", "XW^{-1}",
                          "\mu1", "XW1", "v(\\mu)",
                          "A", "AXW^{-1}A^T",
