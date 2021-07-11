@@ -276,6 +276,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         st.write(y[0])
         st.write(type(y))
         st.write(type(y[0]))
+        st.write(round_list(y, make_tuple=True))
         w += betad * dw
         if variable_dict["update 11.26"]:
             mu = gamma * x_full.dot(w) / (m_s + n_s)
