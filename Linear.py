@@ -154,7 +154,7 @@ def is_neg(x):
 
 def round_list(list, make_tuple=False):
     for i in range(len(list)):
-        if type(list[i]) is str or type(list[i]) is tuple or type(list[i]) == NoneType:
+        if type(list[i]) is str or type(list[i]) is tuple or type(list[i]) == type(None):
             pass
         elif type(list[i]) is list or type(list[i]) is np.ndarray:
             try:
