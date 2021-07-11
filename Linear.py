@@ -499,7 +499,7 @@ if variable_dict["done"]:
         w_r = [round(i, 4) for i in w]
         betap = min(1, optionp)
         betad = min(1, optiond)
-        l_string = "\\beta_P = \\text{min}\\{1, 0.9*\\text{min}\\}"
+        l_string = "\\beta_P = \\text{min}\\{1, 0.9*\\text{min}\\} "
         for i in range(n_full):
             if dx_r[i] < 0:
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
