@@ -134,14 +134,14 @@ if m_s > 0 and n_s > 0:
     with col[0]:
         st.write(r"""$\alpha$: Step size parameter.""")
         alpha = st.number_input(r"""""", value=0.9, step=0.01, min_value=0.0, max_value=0.999,
-                                help=r"""Ensures each variable is reduced by no more than a factor of $1 - \alpha$. $0 < \alpha < 1$""")
+                                help=r"""Ensures each variable is reduced by no more than a factor of $1 - \alpha$. $\hspace{13px} 0 < \alpha < 1$""")
         st.write("""$\gamma$: Duality gap parameter.""")
         gamma = st.number_input(r"""""", value=0.25, step=0.01,
-                                help=r"""The complimentary slackness parameter $\mu$ is multiplied by $\gamma$ each iteration such that $\mu \rightarrow 0$. $0 < \gamma < 1$""")
+                                help=r"""The complimentary slackness parameter $\mu$ is multiplied by $\gamma$ each iteration such that $\mu \rightarrow 0$. $\hspace{13px} 0 < \gamma < 1$""")
     with col[1]:
         st.write("""$\epsilon$: Optimality tolerance.""")
         epsilon = st.number_input(r"""""", value=0.01, step=0.001, format="%f", min_value=0.00001,
-                                  help=r"""Stop the algorithm once **x**$^T$**w**$< \epsilon$. $\epsilon > 0$""")
+                                  help=r"""Stop the algorithm once **x**$^T$**w**$< \epsilon$. $\hspace{13px} \epsilon > 0$""")
         st.write("""$\mu$: Initial complementary slackness parameter.""")
         mu = st.number_input("", value=5.0, step=0.1, help = r"""$\mu > 0$""") #0.25
     variable_dict["done"] = st.checkbox("Solve")
