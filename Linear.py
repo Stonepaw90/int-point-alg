@@ -76,14 +76,14 @@ with col[0]:
         input_dataframe,
         height=grid_height,
         width='100%',
+        suppressMenu = True, #This line removes the filter
         editable=True,
-        suppressMenu = True, #This line removes the filter 1
-        #sortable=False,
-        #filter=False,
+        #filter = False,
+        sortable=False,
         resizable=True,
-        defaultWidth=width,
         fit_columns_on_grid_load=False,
-        key=matrix_key)
+        key=matrix_key
+    )
 # Convert Matrix, catching errors. Errors lead to a stop that prints out the matrix and your matrix shape (m_s, n_s).
 try:
     messy_matrix = response['data'].replace("nan", "")
