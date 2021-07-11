@@ -88,7 +88,7 @@ with col[0]:
         height=grid_height,
         width='100%',
         gridOptions = gridOptions,
-        #editable=True,
+        editable=True,
         #sortable=False,
         #enableFilter=False,
         #resizable=True,
