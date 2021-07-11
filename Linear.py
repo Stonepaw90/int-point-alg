@@ -170,13 +170,8 @@ if variable_dict["done"]:  #Once solve is pressed
         c_full = c
         st.write(matrix_full.dot(x_full))
         st.write(b)
-        try:
-            assert matrix_full.dot(x_full) == b
-        except:
-            st.latex("\\text{Ensure } Ax = b.")
-            st.write("1")
-        if not matrix_full.dot(x_full) == b:
-            st.latex("\\text{Ensure } Ax = b.")
+        if matrix_full.dot(x_full) != b:
+            st.latex(f"\\text{{Error: }} Ax \\neq b, ({str(matrix_full.dot(x_full))} \\neq {str(b)})")
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
             # x_full = np.concatenate((x,s))
