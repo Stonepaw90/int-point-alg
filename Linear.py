@@ -191,7 +191,8 @@ if variable_dict["done"]:  #Once solve is pressed
         x_full = x
         c_full = c
         try:
-            matrix_full.dot(x_full) - b
+            if type(matrix_full.dot(x_full) - b) is str:
+                pass #Why this code? It checks that matrix_full, x_full, and b are the right size.
         except:
             st.write("The given vectors have incorrect dimensions.")
             st.stop()
