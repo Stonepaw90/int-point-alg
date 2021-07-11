@@ -75,9 +75,9 @@ with col[0]:
     gb = GridOptionsBuilder.from_dataframe(input_dataframe)
     gb.configure_default_column(editable=True, filter = False, sortable = False)
     gb.configure_grid_options(
-        #editable=True,
-        #sortable=False,
-        #filter = False,
+        editable=True,
+        sortable=False,
+        filter = False,
         #enableFilter=False,
         resizable=True,
         defaultWidth=width,
