@@ -73,7 +73,7 @@ st.write(
 col = st.beta_columns(2)
 with col[0]:
     gb = GridOptionsBuilder.from_dataframe(input_dataframe)
-    gb.configure_default_column(editable=True, filter = False, sortable = False)
+    gb.configure_default_column(editable=True, filter = False, sortable = False, height = 100)
     gb.configure_grid_options(
         editable=True,
         sortable=False,
@@ -86,12 +86,12 @@ with col[0]:
     gridOptions = gb.build()
     response = AgGrid(
         input_dataframe,
-        height=grid_height/10,
+        #height=grid_height,
         width='100%',
         gridOptions = gridOptions,
-        editable=True,
-        filter = False,
-        sortable=False,
+        #editable=True,
+        #filter = False,
+        #sortable=False,
         #enableFilter=False,
         #resizable=True,
         #defaultWidth=width,
