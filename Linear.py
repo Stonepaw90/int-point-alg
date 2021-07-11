@@ -78,7 +78,7 @@ with col[0]:
         width='100%',
         editable=True,
         sortable=False,
-        filter=False,
+        enableFilter=False,
         resizable=True,
         defaultWidth=width,
         fit_columns_on_grid_load=False,
