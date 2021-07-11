@@ -505,7 +505,7 @@ if variable_dict["done"]:
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
         l_string = l_string[:-1] + "\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
         st.latex(l_string)
-        l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\}"
+        l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\} "
         for i in range(n_full):
             if dw_r[i] < 0:
                 l_string += "\\frac{" + str(w_r[i]) + "}{" + str(-dw_r[i]) + "},"
