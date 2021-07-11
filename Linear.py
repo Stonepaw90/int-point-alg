@@ -151,6 +151,25 @@ if m_s > 0 and n_s > 0:
 def is_neg(x):
     return any([i <= 0 for i in x])
 
+def round_list(list, make_tuple=False):
+    for i in range(len(list)):
+        if type(list[i]) is str or type(list[i]) is tuple:
+            pass
+        elif type(list[i]) is list or type(list[i]) is np.ndarray:
+            try:
+                for j in range(len(list[i])):
+                    list[i][j] = round(list[i][j], 4)
+                if make_tuple:
+                    if len(list[i]) > 1:
+                        list[i] = tuple(list[i])
+                    else:
+                        list[i] = float(list[i][0])
+            except:
+                pass
+        else:
+            list[i] = round(list[i], 4)
+    return list
+
 
 if variable_dict["done"]:  #Once solve is pressed
     # Always run! Ex 11.7, standard, canonical, this is always run.
@@ -221,25 +240,6 @@ if variable_dict["done"]:  #Once solve is pressed
 iter = 0
 data = []
 
-
-def round_list(list, make_tuple=False):
-    for i in range(len(list)):
-        if type(list[i]) is str or type(list[i]) is tuple:
-            pass
-        elif type(list[i]) is list or type(list[i]) is np.ndarray:
-            try:
-                for j in range(len(list[i])):
-                    list[i][j] = round(list[i][j], 4)
-                if make_tuple:
-                    if len(list[i]) > 1:
-                        list[i] = tuple(list[i])
-                    else:
-                        list[i] = float(list[i][0])
-            except:
-                pass
-        else:
-            list[i] = round(list[i], 4)
-    return list
 
 
 if variable_dict["done"]:  # All branches get here, once data has been verified.
