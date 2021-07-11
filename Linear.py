@@ -232,7 +232,7 @@ def round_list(list, make_tuple=False):
                 if make_tuple:
                     if len(list[i] == 1):
                         st.write(list[i])
-                        list[i] = tuple(list[i]])
+                        list[i] = tuple(list[i])
                     else:
                         list[i] = tuple(list[i])
             except:
