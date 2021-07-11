@@ -113,24 +113,40 @@ if m_s > 0 and n_s > 0:
     col = st.beta_columns(2)
     # col_help = 0
     with col[0]:
-        b = np.array([float(i) for i in
+        try:
+            b = np.array([float(i) for i in
                       st.text_input(f"Right-hand side b (a {m_s}-vector)", value=default_var[0]).split(" ") if i]) # 2 1
+        except:
+            st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
+            st.stop()
     if variable_dict["standard"]:
         n_full = n_s + m_s
     else: #n_s is already big!
         n_full = n_s
     with col[1]:
-        c = np.array([float(i) for i in
+        try:
+            c = np.array([float(i) for i in
                       st.text_input(f"Objective function coefficients c (a {n_s}-vector)", value=default_var[1]).split(
                           " ") if i]) #1 2 0 0
+        except:
+            st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
+            st.stop()
     st.header("Initial solution")
     col = st.beta_columns(2)
     with col[0]:
-        x = np.array([float(i) for i in
+        try:
+            x = np.array([float(i) for i in
                       st.text_input(f"x (a {n_s}-vector)", value=default_var[2]).split(" ") if i]) #1 0.5 0.5 1.5
+        except:
+            st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
+            st.stop()
     with col[1]:
-        y = np.array([float(i) for i in
+        try:
+            y = np.array([float(i) for i in
                       st.text_input(f"y (a {m_s}-vector)", value=default_var[3]).split(" ") if i]) #2 0.5
+        except:
+            st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
+            st.stop()
     st.header("Parameters")
     col = st.beta_columns(2)
     with col[0]:
