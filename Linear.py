@@ -168,7 +168,7 @@ if variable_dict["done"]:  #Once solve is pressed
         matrix_full = matrix_small
         x_full = x
         c_full = c
-        if not all([abs(i) > 0.0001 for i in matrix_full.dot(x_full) - b]):
+        if any([abs(i) > 0.0001 for i in (matrix_full.dot(x_full) - b)]):
             st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*matrix_full.dot(x_full))} \\neq {str(*b)}")
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
