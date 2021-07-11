@@ -154,8 +154,9 @@ def is_neg(x):
 if variable_dict["done"]:  #Once solve is pressed
     # Always run! Ex 11.7, standard, canonical, this is always run.
     # By this point, crucially, our data has been marked as correct. We should still check this.
-    st.header("The data is:")
+
     if variable_dict["standard"]:
+        st.header("After converting to canonical form, the data and initial solutions are:")
         try:
             s = b - matrix_small.dot(x)
             matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
@@ -165,6 +166,7 @@ if variable_dict["done"]:  #Once solve is pressed
             st.write("The given vectors have incorrect dimensions.")
             st.stop()
     else:
+        st.header("The data and initial solutions are:")
         matrix_full = matrix_small
         x_full = x
         c_full = c
@@ -434,7 +436,7 @@ if variable_dict["done"]:
     # else:
     #    mu = 5
     iter = 0
-    st.write("Detailed output of all iterations below.")
+    st.write("Detailed output of all iterations is below.")
     st.write("# ")
     st.write("""---""")
     st.write("# ")
@@ -479,7 +481,7 @@ if variable_dict["done"]:
             else:
                 latex_matrix(matrix_string[i], matrix_list[i], True, col[0], col[1], col[2])
             if i == 2:
-                st.write("Details of (11.22):")
+                st.write("Details of (11.21):")
                 col = st.beta_columns(3)
                 col_help = 2
             if i == 5:
@@ -487,7 +489,7 @@ if variable_dict["done"]:
                 col = st.beta_columns(3)
                 col_help = 0
             if i == 7:
-                st.markdown("Solving for **d**:")
+                st.markdown("Solving for *d*:")
                 col = st.beta_columns(3)
                 col_help = 0
 
@@ -500,17 +502,20 @@ if variable_dict["done"]:
         w_r = [round(i, 4) for i in w]
         betap = min(1, optionp)
         betad = min(1, optiond)
-        l_string = f"\\beta_P = \\text{{min}}(1, 0.9*\\text{{min}}("
+        l_string = "\\beta_P = \\text{min}{1, 0.9*\\text{min}{"
         for i in range(n_full):
             if dx_r[i] < 0:
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
-        l_string = l_string[:-1] + f") = \\text{{min}}(1, {round(optionp, 4)}) = {round(betap, 4)}"
+                
+        #l_string = l_string[:-1] + f") = \\text{{min}}(1, {round(optionp, 4)}) = {round(betap, 4)}"
+        l_string = l_string[:-1] + f"} = \\text{{min}}{{1, {round(optionp, 4)}}} = {round(betap, 4)}"
+
         st.latex(l_string)
-        l_string = f"\\beta_D = \\text{{min}}(1, 0.9*\\text{{min}}("
+        l_string = "\\beta_D = \\text{min}{1, 0.9*\\text{min}{"
         for i in range(n_full):
             if dw_r[i] < 0:
                 l_string += "\\frac{" + str(w_r[i]) + "}{" + str(-dw_r[i]) + "},"
-        l_string = l_string[:-1] + f") = \\text{{min}}(1, {round(optiond, 4)}) = {round(betad, 4)}"
+        l_string = l_string[:-1] + f"} = \\text{{min}}{{1, {round(optiond, 4)}}} = {round(betad, 4)}"
         st.latex(l_string)
         col = st.beta_columns(3)
         with col[0]:
