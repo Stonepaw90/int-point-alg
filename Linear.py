@@ -71,7 +71,6 @@ st.markdown("Write your matrix in the top-left of this entry grid. The maximum s
 st.write(
     "Press enter or tab to confirm your edits.")
 col = st.beta_columns(2)
-5 - 3
 with col[0]:
     response = AgGrid(
         input_dataframe,
@@ -192,8 +191,7 @@ if variable_dict["done"]:  #Once solve is pressed
         x_full = x
         c_full = c
         try:
-            if len(matrix_full.dot(x_full) - b) == 1337:
-                pass
+            matrix_full.dot(x_full) - b
         except:
             st.write("The given vectors have incorrect dimensions.")
             st.stop()
