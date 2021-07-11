@@ -72,30 +72,30 @@ st.write(
     "Press enter or tab to confirm your edits.")
 col = st.beta_columns(2)
 with col[0]:
-    gb = GridOptionsBuilder.from_dataframe(input_dataframe)
-    gb.configure_default_column(editable=True, filter = False, sortable = False, suppressMenu= True)
-    gb.configure_grid_options(
-        editable=True,
-        sortable=False,
-        filter = False,
-        #enableFilter=False,
-        resizable=True,
-        defaultWidth=width,
-        suppressMenu= True,
-        fit_columns_on_grid_load=False,
-        key=matrix_key)
-    gridOptions = gb.build()
+    #gb = GridOptionsBuilder.from_dataframe(input_dataframe)
+    #gb.configure_default_column(editable=True, filter = False, sortable = False, suppressMenu= True)
+    #gb.configure_grid_options(
+    #    editable=True,
+    #    sortable=False,
+    #    filter = False,
+    #    #enableFilter=False,
+    #    resizable=True,
+    #    defaultWidth=width,
+   #    suppressMenu= True,
+    #    fit_columns_on_grid_load=False,
+    #    key=matrix_key)
+    #gridOptions = gb.build()
     response = AgGrid(
         input_dataframe,
         height=grid_height,
         width='100%',
-        gridOptions = gridOptions,
+        #gridOptions = gridOptions,
         suppressMenu = True,
-        #editable=True,
-        #filter = False,
-        #sortable=False,
+        editable=True,
+        filter = False,
+        sortable=False,
         #enableFilter=False,
-        #resizable=True,
+        resizable=True,
         #defaultWidth=width,
         fit_columns_on_grid_load=False,
         key=matrix_key
