@@ -477,13 +477,23 @@ if variable_dict["done"]:
             if i in [0, 1, 2, 6, 7]:
                 with col[col_help % 3]:
                     if i == 6:
-                        st.latex(matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
-                        col_help += 2
+                        if m_s < 6:
+                            st.latex(matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
+                            col_help += 2
+                        else:
+                            with col[1]:
+                                st.latex(matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
                     elif i == 7:
-                        st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
-                            sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
-                        col_help += 1
-                    else:
+                        if m_s < 6:
+                            st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
+                                sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
+                            col_help += 1
+                        else:
+                            with col[1]:
+                                st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
+                                    sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
+                            col_help = 0
+                    elif n_full < 6: #Happens with i == 0,1,2
                         st.latex(matrix_string[i] + "=" + diagonal_matrix(matrix_list[i]))
                         col_help += 1
             else:
