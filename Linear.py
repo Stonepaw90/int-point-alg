@@ -79,7 +79,7 @@ with col[0]:
         suppressMenu = True,
         editable=True,
         #filter = False,
-        #sortable=False,
+        sortable=False,
         resizable=True,
         fit_columns_on_grid_load=False,
         key=matrix_key
