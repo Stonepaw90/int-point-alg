@@ -72,25 +72,37 @@ st.write(
     "Press enter or tab to confirm your edits.")
 col = st.beta_columns(2)
 with col[0]:
-    response = AgGrid(
-        input_dataframe,
-        height=grid_height,
-        width='100%',
-        editable=True,
+    gb = GridOptionsBuilder.from_dataframe(input_dataframe)
+    gb.configure_grid_options(editable=True,
         sortable=False,
+        filter = False,
         enableFilter=False,
         resizable=True,
         defaultWidth=width,
         fit_columns_on_grid_load=False,
         key=matrix_key)
-    gridOptions = {
-        floatingFilter: true
-        columnDefs:
-        [{
-            suppressMenu: true,
-            floatingFilterComponentParams: {suppressFilterButton:true}
-         }]
-    }
+    gridOptions = gb.build()
+    response = AgGrid(
+        input_dataframe,
+        height=grid_height,
+        width='100%',
+        gridOptions = gridOptions
+        #editable=True,
+        #sortable=False,
+        #enableFilter=False,
+        #resizable=True,
+        #defaultWidth=width,
+        #fit_columns_on_grid_load=False,
+        #key=matrix_key
+    )
+    #gridOptions = {
+    #    floatingFilter: true
+    #    columnDefs:
+    #    [{
+    #        suppressMenu: true,
+    #        floatingFilterComponentParams: {suppressFilterButton:true}
+    #     }]
+    #}
 # Convert Matrix, catching errors. Errors lead to a stop that prints out the matrix and your matrix shape (m_s, n_s).
 try:
     messy_matrix = response['data'].replace("nan", "")
