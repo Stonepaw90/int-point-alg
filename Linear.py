@@ -242,12 +242,13 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
     variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=False)
 
     ###ITERATION 0 ROW
+    st.write(y,1)
     if variable_dict["advanced"]:
         # IN CANONICAL FORM THERE IS NO S TO PRINT! We're already printing x_full.
-        if variable_dict["standard"]:
+        if variable_dict["standard"]: #Standard, advanced
             data.append(round_list([iter, mu, x_full.dot(w), f, x, s, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "s", "y", "w"]
-        else:
+        else: #Canonical, advanced
             data.append(round_list([iter, mu, x_full.dot(w), f, x_full, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
     else:
@@ -257,7 +258,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         else:  # Not advanced, canonical
             data.append(round_list([iter, mu, x_full.dot(w), f, x_full], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
-
+    st.write(y,2)
     while not np.dot(x_full, w) < epsilon:
         diagx = np.diagflat(x_full)
         diagw = np.diagflat(w)
