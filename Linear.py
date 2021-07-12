@@ -314,10 +314,15 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
 
         iter += 1
         f = x_full.dot(c_full)
-
+        ax = matrix_full.dot(x_full)
         if not variable_dict["standard"]:
-            if any([abs(i) > 0.001 for i in (matrix_full.dot(x_full) - b)]):
-                st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(matrix_full.dot(x_full))) + f"\\neq" + lt(b))
+            if any([abs(i) > 0.001 for i in (ax - b)]):
+                st.write("A", matrix_full)
+                st.write("b", b)
+                st.write("Ax", ax)
+                st.write('x', x_full)
+                st.write("rounded", round_list(ax))
+                st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
                 #st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
                 df = pd.DataFrame(data, columns=alist)
                 st.markdown("""
