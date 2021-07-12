@@ -213,8 +213,13 @@ if variable_dict["done"]:  #Once solve is pressed
         except:
             st.write("The given vectors have incorrect dimensions.")
             st.stop()
-        if any([abs(i) > 0.001 for i in (matrix_full.dot(x_full) - b)]):
-            st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(matrix_full.dot(x_full))) + f"\\neq" + lt(b))
+        ax = matrix_full.dot(x_full)
+        if any([abs(i) > 0.001 for i in (ax - b)]):
+            st.write("A", matrix_full)
+            st.write("b", b)
+            st.write("Ax", ax)
+            st.write("rounded", round_list(ax))
+            st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
             # x_full = np.concatenate((x,s))
