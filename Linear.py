@@ -165,8 +165,11 @@ if m_s > 0 and n_s > 0:
     variable_dict["done"] = st.checkbox("Solve")
 
 
-def is_neg(x):
-    return any([i <= 0 for i in x])
+def is_neg(x, strict = True):
+    if not strict:
+        return any([i < 0 for i in x])
+    else:
+        return any([i <= 0 for i in x])
 
 def round_list(list, make_tuple=False):
     for i in range(len(list)):
@@ -244,8 +247,8 @@ if variable_dict["done"]:  #Once solve is pressed
         with col[col_helper1 % 5]:
             st.latex(names[i] + "=" + sympy.latex(var[i]))
             col_helper1 += 1
-    if is_neg(x_full):
-        st.markdown("Error: $x\leq0$.")
+    if is_neg(x_full, False):
+        st.markdown("Error: $x < 0$.")
         st.stop()
     if is_neg(w):
         st.markdown("Error: $w\leq0$.")
@@ -562,24 +565,21 @@ if variable_dict["done"]:
         w_r = [round(i, 4) for i in w]
         betap = min(1, optionp)
         betad = min(1, optiond)
+
+        #betap
         l_string = "\\beta_P = \\text{min}\\{1, 0.9*\\text{min}\\{ "
-        #empty = True
         for i in range(n_full):
             if dx_r[i] < 0:
                 #empty = False
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
-        #if empty:
-            #l_string = l_string[:-3] + "\\{ \\} "
         l_string = l_string[:-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
         st.latex(l_string)
+
+        #betad
         l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\{ "
-        #empty = True
         for i in range(n_full):
             if dw_r[i] < 0:
-        #        empty = False
                 l_string += "\\frac{" + str(w_r[i]) + "}{" + str(-dw_r[i]) + "},"
-        #if empty:
-        #    l_string = l_string[:-3] + "\\{ \\} "
         l_string = l_string[:-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optiond, 4)}" + "\\} = " + f"{round(betad, 4)}"
         st.latex(l_string)
         col = st.beta_columns(3)
