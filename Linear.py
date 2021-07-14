@@ -693,6 +693,8 @@ if variable_dict["done"]:
                 for i in range(m_s):
                     legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
                 legend_l.append("Initial")
+                legend_l.append("Improving")
+                legend_l.append("Epsilon-optimal")
                 ax.legend(legend_l)
                 
                
