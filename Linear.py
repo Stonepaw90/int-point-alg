@@ -676,7 +676,7 @@ if variable_dict["done"]:
             bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
             legend_show = legend_print.checkbox("Show legend?", True)
             try:
-                bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
+                bbox = [float(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
                 max_x0 = max(x_initial[0], x_full[0])
                 max_y0 = max(x_initial[1], x_full[1])
