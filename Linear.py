@@ -688,14 +688,13 @@ if variable_dict["done"]:
                 for i in range(len(df['x'])-1):
                     bo = ax.plot(*df['x'][i+1], 'bo', label = "Improving Point")
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
-                ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
+                #ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
                 legend_l = []
                 for i in range(m_s):
                     legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
                 legend_l.append("Initial")
-                legend_l.append("Improving")
-                legend_l.append(NULL)
-                legend_l.append("Epsilon-optimal")
+                #legend_l.append("Improving")
+                #legend_l.append("Epsilon-optimal")
                 ax.legend(legend_l)
                 
                
