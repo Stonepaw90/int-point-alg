@@ -691,7 +691,7 @@ if variable_dict["done"]:
                 ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
                 legend_l = []
                 for i in range(m_s):
-                    legend_l.append(str(matrix_small[i][0]) + "x " + str(matrix_small[i][0]) + "y <= " + str(b[i]))
+                    legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][0]) + "y <= " + str(b[i]))
                 ax.legend(legend_l)
                 
                
