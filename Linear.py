@@ -7,6 +7,73 @@ from st_aggrid import AgGrid, DataReturnMode, GridUpdateMode, GridOptionsBuilder
 
 st.set_page_config(layout="wide")
 
+import matplotlib.pyplot as plt
+from scipy.spatial import HalfspaceIntersection, ConvexHull
+from scipy.optimize import linprog
+
+def feasible_point(A, b):
+    # finds the center of the largest sphere fitting in the convex hull
+    norm_vector = np.linalg.norm(A, axis=1)
+    A_ = np.hstack((A, norm_vector[:, None]))
+    b_ = b[:, None]
+    c = np.zeros((A.shape[1] + 1,))
+    c[-1] = -1
+    res = linprog(c, A_ub=A_, b_ub=b[:, None], bounds=(None, None))
+    return res.x[:-1]
+
+def hs_intersection(A, b):
+    interior_point = feasible_point(A, b)
+    halfspaces = np.hstack((A, -b[:, None]))
+    hs = HalfspaceIntersection(halfspaces, interior_point)
+    return hs
+
+def plt_halfspace(a, b, bbox, ax):
+    if a[1] == 0:
+        ax.axvline(b / a[0])
+    else:
+        x = np.linspace(bbox[0][0], bbox[0][1], 100)
+        ax.plot(x, (b - a[0]*x) / a[1])
+
+def add_bbox(A, b, xrange, yrange):
+    A = np.vstack((A, [
+        [-1,  0],
+        [ 1,  0],
+        [ 0, -1],
+        [ 0,  1],
+    ]))
+    b = np.hstack((b, [-xrange[0], xrange[1], -yrange[0], yrange[1]]))
+    return A, b
+
+def solve_convex_set(A, b, bbox, ax=None):
+    A_, b_ = add_bbox(A, b, *bbox)
+    interior_point = feasible_point(A_, b_)
+    hs = hs_intersection(A_, b_)
+    points = hs.intersections
+    hull = ConvexHull(points)
+    return points[hull.vertices], interior_point, hs
+
+def plot_convex_set(A, b, bbox, ax=None):
+    # solve and plot just the convex set (no lines for the inequations)
+    points, interior_point, hs = solve_convex_set(A, b, bbox, ax=ax)
+    if ax is None:
+        _, ax = plt.subplots()
+    ax.set_aspect('equal')
+    ax.set_xlim(bbox[0])
+    ax.set_ylim(bbox[1])
+    ax.fill(points[:, 0], points[:, 1], 'gray')
+    return points, interior_point, hs
+
+def plot_inequalities(A, b, bbox, ax=None):
+    # solve and plot the convex set,
+    # the inequation lines, and
+    # the interior point that was used for the halfspace intersections
+    points, interior_point, hs = plot_convex_set(A, b, bbox, ax=ax)
+    #ax.plot(*interior_point, 'o')
+    for a_k, b_k in zip(A, b):
+        plt_halfspace(a_k, b_k, bbox, ax)
+    return points, interior_point, hs
+
+#plt.rcParams['figure.figsize'] = (6, 3)
 variable_dict = {"advanced": False, "update 11.26": False, "standard": False, "done": False, "ex 11.7":False}
 
 st.title("Interior Point Algorithm for Linear Programs")
@@ -105,6 +172,11 @@ except:  # If any errors with conversion
     st.stop()  # Nice exit of program, with no giant red errors.
 if m_s > 0 and n_s > 0:
     # Only get here if no errors. #Non-zero matrix, with no errors! Yay!
+    if not variable_dict['standard']:
+        if m_s > n_s:
+            st.markdown("This program cannot handle redundant constraints in canonical form. "
+                        "Please enter a coefficient matrix with the number of rows $\leq$ the number of columns.")
+            st.stop()
     st.write("You entered")
     col = st.beta_columns(2)
     with col[0]:
@@ -218,10 +290,6 @@ if variable_dict["done"]:  #Once solve is pressed
             st.stop()
         ax = matrix_full.dot(x_full)
         if any([abs(i) > 0.001 for i in (ax - b)]):
-            st.write("A", matrix_full)
-            st.write("b", b)
-            st.write("Ax", ax)
-            st.write("rounded", round_list(ax))
             st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
@@ -301,7 +369,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         try:
             dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
         except:
-            st.latex("AXW^{-1}A^T \\text{ Could not be inverted. Perhaps your coefficient matrix is singular.}")
+            st.latex("AXW^{-1}A^T \\text{ Could not be inverted. This may be due to redundant constraints.}")
             st.stop()
         dw = matrix_full.T.dot(dy)
         dx = diagwinv.dot(vmu - diagx.dot(dw))
@@ -320,13 +388,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         ax = matrix_full.dot(x_full)
         if not variable_dict["standard"]:
             if any([abs(i) > 0.001 for i in (ax - b)]):
-                st.write("A", matrix_full)
-                st.write("b", b)
-                st.write("Ax", ax)
-                st.write('x', x_full)
-                st.write("rounded", round_list(ax))
                 st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
-                #st.latex(f"Ax \\neq b, \hspace{{8px}} {str(*round_list(matrix_full.dot(x_full)))} \\neq {str(*b)}")
                 df = pd.DataFrame(data, columns=alist)
                 st.markdown("""
                     <style>
@@ -353,7 +415,9 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             else:  # Not advanced, canonical
                 data.append(round_list([iter, mu, x_full.dot(w), f, x_full], make_tuple=True))
 
-        assert iter < 15, "The program terminated, as after 15 iterations, the duality gap was still more than epsilon."
+        if iter >= 15:
+            st.write("The program terminated, as after 15 iterations, the duality gap was still more than epsilon.")
+            st.stop()
     df = pd.DataFrame(data, columns=alist)
     st.markdown("""
     <style>
@@ -462,6 +526,10 @@ def digit_fix(subs):
 
 #if st.button("Detailed output of all iterations.") and variable_dict["done"]:
 if variable_dict["done"]:
+    if gamma == 0.123:
+        col = st.beta_columns(2)
+        with col[0]:
+            plot_space = st.empty()
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
@@ -526,7 +594,7 @@ if variable_dict["done"]:
                             st.latex(matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
                             col_help += 2
                         else:
-                            with col[0]:
+                            with col[1]:
                                 st.latex(matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
                     elif i == 7:
                         if m_s < 6:
@@ -534,7 +602,7 @@ if variable_dict["done"]:
                                 sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
                             col_help += 1
                         else:
-                            with col[0]:
+                            with col[1]:
                                 st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
                                     sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
                             col_help = 0
@@ -599,3 +667,17 @@ if variable_dict["done"]:
         iter += 1
         st.write("""---""")
         assert iter <= len(df), "Too many iterations"
+    if gamma == 0.123 and n_s ==2:
+        max_x0 = max(x_initial[0], x_full[0])
+        max_y0 = max(x_initial[1], x_full[1])
+        st.write(max_y0, max_x0, x_initial[:n_s], x_full)
+        if x[0] >= 0 and x[1] >= 0:
+            bbox = [[0, max_x0*3+5], [0, max_y0*3+5]]
+        fig = plt.figure(figsize=(7,3), dpi = 80)
+        ax = plt.axes()
+        plot_inequalities(matrix_small, b, bbox, ax=ax)
+        ax.plot(*df['x'][0], 'go')
+        for i in range(len(df['x'])-1):
+            ax.plot(*df['x'][i+1], 'bo')
+            ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
+        plot_space.pyplot(fig)
