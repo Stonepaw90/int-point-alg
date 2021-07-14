@@ -699,6 +699,10 @@ if variable_dict["done"]:
                 legend_l = []
                 for i in range(m_s):
                     rowc = matrix_small[i]
+                    if rowc[0]%1 == 0:
+                        rowc[0] = int(rowc[0])
+                    if rowc[1] % 1 == 0:
+                        rowc[1] = int(rowc[1])
                     xstr = "x + "
                     ystr = "y"
                     legstring = ""
@@ -712,8 +716,8 @@ if variable_dict["done"]:
                             pass
                     else:
                         legstring += str(rowc[1]) + "y"
-                    legstring += "<= " + str(b[i])
-                    
+                    legstring += " <= " + str(b[i])
+
                     legend_l.append(legstring)
                     #legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
                 legend_l.append("Initial")
