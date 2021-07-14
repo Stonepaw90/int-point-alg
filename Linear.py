@@ -531,6 +531,8 @@ if variable_dict["done"]:
         col = st.beta_columns(2)
         with col[0]:
             plot_space = st.empty()
+        with col[1]:
+            boundaries = st.empty()
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
@@ -670,7 +672,7 @@ if variable_dict["done"]:
         assert iter <= len(df), "Too many iterations"
     if all([n_s ==2, variable_dict['standard']]):
         if make_plot:
-            bbox = st.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
+            bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
             try:
                 bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
@@ -686,9 +688,8 @@ if variable_dict["done"]:
                 for i in range(len(df['x'])-1):
                     bo = ax.plot(*df['x'][i+1], 'bo')
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
-                #ax.legend([go, bo], ["Initial", "Improving"])
-                ax.legend()
-                fig.legend()
+                fig.legend([go, bo], ["Initial", "Improving"])
+               
                 plot_space.pyplot(fig)
             except:
                 st.write("Plotting failed.")
