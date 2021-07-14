@@ -695,9 +695,9 @@ if variable_dict["done"]:
                     plot_inequalities(matrix_small, b, bbox, ax=ax)
                 else:
                     plot_inequalities(matrix_small[:,:2], b, bbox, ax=ax)
-                go = ax.plot(*df['x'][0], 'go', label = "Initial point")
+                go = ax.plot(*df['x'][0][:2], 'go', label = "Initial point")
                 for i in range(len(df['x'])-1):
-                    bo = ax.plot(*df['x'][i+1], 'bo', label = "Improving Point")
+                    bo = ax.plot(*df['x'][i+1][:2], 'bo', label = "Improving Point")
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
                 #ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
                 legend_l = []
