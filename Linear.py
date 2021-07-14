@@ -526,11 +526,11 @@ def digit_fix(subs):
 
 #if st.button("Detailed output of all iterations.") and variable_dict["done"]:
 if variable_dict["done"]:
-    if gamma == 0.123:
+    make_plot = st.checkbox("Plot this 2 variable system")
+    if make_plot:
         col = st.beta_columns(2)
         with col[0]:
             plot_space = st.empty()
-    make_plot = st.checkbox("Plot this 2 variable system")
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
@@ -671,18 +671,21 @@ if variable_dict["done"]:
     if all([n_s ==2, variable_dict['standard']]):
         if make_plot:
             bbox = st.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
-            bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
-            bbox = [bbox[0:2], bbox[2:]]
-            max_x0 = max(x_initial[0], x_full[0])
-            max_y0 = max(x_initial[1], x_full[1])
-            st.write(max_y0, max_x0, x_initial[:n_s], x_full)
-            #if x[0] >= 0 and x[1] >= 0:
-            #    bbox = [[0, max_x0*3+5], [0, max_y0*3+5]]
-            fig = plt.figure(figsize=(7,3), dpi = 80)
-            ax = plt.axes()
-            plot_inequalities(matrix_small, b, bbox, ax=ax)
-            ax.plot(*df['x'][0], 'go')
-            for i in range(len(df['x'])-1):
-                ax.plot(*df['x'][i+1], 'bo')
-                ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
-            plot_space.pyplot(fig)
+            try:
+                bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
+                bbox = [bbox[0:2], bbox[2:]]
+                max_x0 = max(x_initial[0], x_full[0])
+                max_y0 = max(x_initial[1], x_full[1])
+                #st.write(max_y0, max_x0, x_initial[:n_s], x_full)
+                #if x[0] >= 0 and x[1] >= 0:
+                #    bbox = [[0, max_x0*3+5], [0, max_y0*3+5]]
+                fig = plt.figure(figsize=(7,3), dpi = 80)
+                ax = plt.axes()
+                plot_inequalities(matrix_small, b, bbox, ax=ax)
+                ax.plot(*df['x'][0], 'go')
+                for i in range(len(df['x'])-1):
+                    ax.plot(*df['x'][i+1], 'bo')
+                    ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
+                plot_space.pyplot(fig)
+            except:
+                st.write("Plotting failed.")
