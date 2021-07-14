@@ -686,6 +686,7 @@ if variable_dict["done"]:
                 for i in range(len(df['x'])-1):
                     ax.plot(*df['x'][i+1], 'bo')
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
+                ax.legend(['go', 'bo'], ["Initial", "Improving"])
                 plot_space.pyplot(fig)
             except:
                 st.write("Plotting failed.")
