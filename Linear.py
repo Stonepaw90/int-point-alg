@@ -708,8 +708,8 @@ if variable_dict["done"]:
                 #legend_l.append("Epsilon-optimal")
                 if legend_show:
                     ax.legend(legend_l)
-                ax.xlabel("x")
-                ax.ylabel("y")
+                fig.xlabel("x")
+                fig.ylabel("y")
                 plot_space.pyplot(fig)
             except:
                 pass
