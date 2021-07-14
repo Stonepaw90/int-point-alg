@@ -684,11 +684,6 @@ if variable_dict["done"]:
             try:
                 bbox = [float(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
-                #max_x0 = max(x_initial[0], x_full[0])
-                #max_y0 = max(x_initial[1], x_full[1])
-                #st.write(max_y0, max_x0, x_initial[:n_s], x_full)
-                #if x[0] >= 0 and x[1] >= 0:
-                #    bbox = [[0, max_x0*3+5], [0, max_y0*3+5]]
                 fig = plt.figure(figsize=(7,3), dpi = 80)
                 ax = plt.axes()
                 if variable_dict['standard']:
@@ -696,20 +691,36 @@ if variable_dict["done"]:
                 else:
                     plot_inequalities(matrix_small[:,:2], b, bbox, ax=ax)
                 go = ax.plot(*df['x'][0][:2], 'go', label = "Initial point")
+
                 for i in range(len(df['x'])-1):
                     bo = ax.plot(*df['x'][i+1][:2], 'bo', label = "Improving Point")
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
-                #ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
+                #ro = ax.plot(*df['x'][i+1][:2], 'ro', label = "Epsilon-optimal Point")
                 legend_l = []
                 for i in range(m_s):
-                    legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
+                    rowc = matrix_small[i]
+                    xstr = "x + "
+                    ystr = "y"
+                    legstring = ""
+                    if rowc[0] != 0:
+                        legstring += str(rowc[0]) + "x"
+                        if rowc[1] > 0:
+                            legstring += " + " + str(rowc[1]) + "y"
+                        if rowc[1] < 0:
+                            legstring += " - " + str(-rowc[1]) + "y"
+                        if rowc[1] == 0:
+                            pass
+                    else:
+                        legstring += str(rowc[1]) + "y"
+                    legstring += "<= " + str(b[i])
+                    
+                    legend_l.append(legstring)
+                    #legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
                 legend_l.append("Initial")
                 #legend_l.append("Improving")
                 #legend_l.append("Epsilon-optimal")
                 if legend_show:
                     ax.legend(legend_l)
-                plt.xlabel("x")
-                plt.ylabel("y")
                 plot_space.pyplot(fig)
             except:
                 pass
