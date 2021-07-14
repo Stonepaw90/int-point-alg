@@ -671,33 +671,34 @@ if variable_dict["done"]:
         st.write("""---""")
         assert iter <= len(df), "Too many iterations"
     if all([n_s ==2, variable_dict['standard']]):
-        if make_plot:
-            bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
-            try:
-                bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
-                bbox = [bbox[0:2], bbox[2:]]
-                max_x0 = max(x_initial[0], x_full[0])
-                max_y0 = max(x_initial[1], x_full[1])
-                #st.write(max_y0, max_x0, x_initial[:n_s], x_full)
-                #if x[0] >= 0 and x[1] >= 0:
-                #    bbox = [[0, max_x0*3+5], [0, max_y0*3+5]]
-                fig = plt.figure(figsize=(7,3), dpi = 80)
-                ax = plt.axes()
-                plot_inequalities(matrix_small, b, bbox, ax=ax)
-                go = ax.plot(*df['x'][0], 'go', label = "Initial point")
-                for i in range(len(df['x'])-1):
-                    bo = ax.plot(*df['x'][i+1], 'bo', label = "Improving Point")
-                    ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
-                #ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
-                legend_l = []
-                for i in range(m_s):
-                    legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
-                legend_l.append("Initial")
-                #legend_l.append("Improving")
-                #legend_l.append("Epsilon-optimal")
-                ax.legend(legend_l)
-                
-               
+        #if make_plot:
+        bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
+        try:
+            bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
+            bbox = [bbox[0:2], bbox[2:]]
+            max_x0 = max(x_initial[0], x_full[0])
+            max_y0 = max(x_initial[1], x_full[1])
+            #st.write(max_y0, max_x0, x_initial[:n_s], x_full)
+            #if x[0] >= 0 and x[1] >= 0:
+            #    bbox = [[0, max_x0*3+5], [0, max_y0*3+5]]
+            fig = plt.figure(figsize=(7,3), dpi = 80)
+            ax = plt.axes()
+            plot_inequalities(matrix_small, b, bbox, ax=ax)
+            go = ax.plot(*df['x'][0], 'go', label = "Initial point")
+            for i in range(len(df['x'])-1):
+                bo = ax.plot(*df['x'][i+1], 'bo', label = "Improving Point")
+                ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
+            #ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
+            legend_l = []
+            for i in range(m_s):
+                legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
+            legend_l.append("Initial")
+            #legend_l.append("Improving")
+            #legend_l.append("Epsilon-optimal")
+            ax.legend(legend_l)
+
+            if make_plot:
                 plot_space.pyplot(fig)
-            except:
-                plot_space.write("Plotting failed.")
+        except:
+            pass
+#            plot_space.write("Plotting failed.")
