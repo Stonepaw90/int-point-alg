@@ -193,8 +193,10 @@ if m_s > 0 and n_s > 0:
             st.stop()
     if variable_dict["standard"]:
         n_full = n_s + m_s
+        n_plot = n_s
     else: #n_s is already big!
         n_full = n_s
+        n_plot = n_s - m_s
     with col[1]:
         try:
             c = np.array([float(i) for i in
@@ -526,14 +528,16 @@ def digit_fix(subs):
 
 #if st.button("Detailed output of all iterations.") and variable_dict["done"]:
 if variable_dict["done"]:
-    make_plot = st.checkbox("Plot this 2 variable system")
-    if make_plot:
-        col = st.beta_columns(2)
-        with col[0]:
-            plot_space = st.empty()
-        with col[1]:
-            boundaries = st.empty()
-            legend_print = st.empty()
+    #if not variable_dict['standard'] and n_plot == 2:
+    if n_plot == 2:
+        make_plot = st.checkbox("Graph feasible region and iterations.")
+        if make_plot:
+            col = st.beta_columns(2)
+            with col[0]:
+                plot_space = st.empty()
+            with col[1]:
+                boundaries = st.empty()
+                legend_print = st.empty()
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
@@ -671,21 +675,26 @@ if variable_dict["done"]:
         iter += 1
         st.write("""---""")
         assert iter <= len(df), "Too many iterations"
-    if all([n_s ==2, variable_dict['standard']]):
+    #if all([n_plot ==2, variable_dict['standard']]):
+
+    if n_plot == 2:
         if make_plot:
             bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
             legend_show = legend_print.checkbox("Show legend?", True)
             try:
                 bbox = [float(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
-                max_x0 = max(x_initial[0], x_full[0])
-                max_y0 = max(x_initial[1], x_full[1])
+                #max_x0 = max(x_initial[0], x_full[0])
+                #max_y0 = max(x_initial[1], x_full[1])
                 #st.write(max_y0, max_x0, x_initial[:n_s], x_full)
                 #if x[0] >= 0 and x[1] >= 0:
                 #    bbox = [[0, max_x0*3+5], [0, max_y0*3+5]]
                 fig = plt.figure(figsize=(7,3), dpi = 80)
                 ax = plt.axes()
-                plot_inequalities(matrix_small, b, bbox, ax=ax)
+                if variable_dict['standard']:
+                    plot_inequalities(matrix_small, b, bbox, ax=ax)
+                else:
+                    plot_inequalities(matrix_small[:,:2], b, bbox, ax=ax)
                 go = ax.plot(*df['x'][0], 'go', label = "Initial point")
                 for i in range(len(df['x'])-1):
                     bo = ax.plot(*df['x'][i+1], 'bo', label = "Improving Point")
