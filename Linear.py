@@ -673,7 +673,7 @@ if variable_dict["done"]:
     if all([n_s ==2, variable_dict['standard']]):
         if make_plot:
             bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
-            try:
+            if True:
                 bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
                 max_x0 = max(x_initial[0], x_full[0])
@@ -690,7 +690,8 @@ if variable_dict["done"]:
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
                 ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
                 ax.legend(handles = [go, bo, ro])
+                
                
                 plot_space.pyplot(fig)
-            except:
+            if False:
                 st.write("Plotting failed.")
