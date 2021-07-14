@@ -723,6 +723,8 @@ if variable_dict["done"]:
                 legend_l.append("Initial")
                 #legend_l.append("Improving")
                 #legend_l.append("Epsilon-optimal")
+                plt.xlabel("x")
+                plt.ylabel("y")
                 if legend_show:
                     ax.legend(legend_l)
                 plot_space.pyplot(fig)
