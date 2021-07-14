@@ -533,6 +533,7 @@ if variable_dict["done"]:
             plot_space = st.empty()
         with col[1]:
             boundaries = st.empty()
+            legend_print = st.empty()
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
@@ -673,6 +674,7 @@ if variable_dict["done"]:
     if all([n_s ==2, variable_dict['standard']]):
         if make_plot:
             bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
+            legend_show = legend_print.checkbox("Show legend?", True)
             try:
                 bbox = [int(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
@@ -695,7 +697,8 @@ if variable_dict["done"]:
                 legend_l.append("Initial")
                 #legend_l.append("Improving")
                 #legend_l.append("Epsilon-optimal")
-                ax.legend(legend_l)
+                if legend_show:
+                    ax.legend(legend_l)
                 plot_space.pyplot(fig)
             except:
                 pass
