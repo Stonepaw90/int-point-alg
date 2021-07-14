@@ -692,7 +692,7 @@ if variable_dict["done"]:
                 legend_l = []
                 for i in range(m_s):
                     legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
-                legend_1.append("Initial")
+                legend_l.append("Initial")
                 ax.legend(legend_l)
                 
                
