@@ -689,7 +689,10 @@ if variable_dict["done"]:
                     bo = ax.plot(*df['x'][i+1], 'bo', label = "Improving Point")
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
                 ro = ax.plot(*df['x'][i+1], 'ro', label = "Epsilon-optimal Point")
-                ax.legend(["1", "2"])
+                legend_l = []
+                for i in range(m_s):
+                    legend_l.append(str(matrix_small[i][0]) + "x " + str(matrix_small[i][0]) + "y <= " + str(b[i]))
+                ax.legend(legend_l)
                 
                
                 plot_space.pyplot(fig)
