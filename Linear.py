@@ -106,7 +106,7 @@ st.markdown('''
 ''')
 st.write(
     "This website uses [Algorithm 11.3](https://www.wiley.com/go/veatch/convexandlinearoptimization) (Primal-dual path following) to solve a linear program in canonical form."
-    " If the problem is entered in standard form, it is converted to canonical form. For two-variable problems in standard form, the feasible region and solutions are graphed.")
+    " If the problem is entered in standard form, it is converted to canonical form. For two-variable problems, the feasible region and solutions are graphed.")
 st.header("Standard and canonical form notation")
 st.markdown("The canonical form problem has $m$ constraints and $n$ variables:")
 col = st.beta_columns(2)
