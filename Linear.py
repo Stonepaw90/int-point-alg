@@ -761,3 +761,4 @@ if variable_dict["done"]:
             except:
                 plot_space.header("Plotting failed.")
 st.write(iter)
+st.write(np.dot(x_full, w))
