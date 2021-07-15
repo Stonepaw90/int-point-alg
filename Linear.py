@@ -727,6 +727,8 @@ if variable_dict["done"]:
                 plt.ylabel("y")
                 if legend_show:
                     ax.legend(legend_l)
+                    
+                @st.cache
                 plot_space.pyplot(fig)
             except:
                 pass
