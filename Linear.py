@@ -369,22 +369,22 @@ data = []
 
 if variable_dict["done"]:  # All branches get here, once data has been verified.
     variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=False)
-
+     mu_e = "{:2.1E}".format(mu)
     ###ITERATION 0 ROW
     if variable_dict["advanced"]:
         # IN CANONICAL FORM THERE IS NO S TO PRINT! We're already printing x_full.
         if variable_dict["standard"]: #Standard, advanced
-            data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
+            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "s", "y", "w"]
         else: #Canonical, advanced
-            data.append(round_list([iter, mu, x_full.dot(w), f, x_full, y, w], make_tuple=True))
+            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
     else:
         if variable_dict["standard"]:  # Not Advanced, and Standard
-            data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
+            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
         else:  # Not advanced, canonical
-            data.append(round_list([iter, mu, x_full.dot(w), f, x_full], make_tuple=True))
+            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
     while np.dot(x_full, w) >= epsilon:
         diagx = np.diagflat(x_full)
@@ -408,7 +408,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             mu = gamma * x_full.dot(w) / (m_s + n_s)
         else:
             mu *= gamma
-
+        mu_e = "{:2.1E}".format(mu)
         iter += 1
         f = x_full.dot(c_full)
         ax = matrix_full.dot(x_full)
@@ -431,14 +431,14 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             #    st.stop()
         if variable_dict["advanced"]:
             if variable_dict["standard"]: #Advanced, standard
-                data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))                
+                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))                
             else: #Advanced, canonical
-                data.append(round_list([iter, mu, x_full.dot(w), f, x_full, y, w], make_tuple=True))
+                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
         else:
             if variable_dict["standard"]:  # Not Advanced, and Standard
-                data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
+                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
             else:  # Not advanced, canonical
-                data.append(round_list([iter, mu, x_full.dot(w), f, x_full], make_tuple=True))
+                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full], make_tuple=True))
 
                                     
                                     
