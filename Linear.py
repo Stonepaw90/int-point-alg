@@ -429,6 +429,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             #    # st.dataframe(df)
             #    st.table(df)
             #    st.stop()
+        st.write(matrix_full.dot(x_full))
         if variable_dict["advanced"]:
             if variable_dict["standard"]: #Advanced, standard
                 data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))                
