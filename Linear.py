@@ -430,7 +430,6 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             #    # st.dataframe(df)
             #    st.table(df)
             #    st.stop()
-        st.write(matrix_full.dot(x_full))
         if variable_dict["advanced"]:
             if variable_dict["standard"]: #Advanced, standard
                 data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))                
@@ -763,5 +762,3 @@ if variable_dict["done"]:
                 plot_space.pyplot(fig)
             except:
                 plot_space.header("Plotting failed.")
-st.write(iter)
-st.write(np.dot(x_full, w))
