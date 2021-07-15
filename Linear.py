@@ -106,7 +106,7 @@ st.markdown('''
 ''')
 st.write(
     "This website uses [Algorithm 11.3](https://www.wiley.com/go/veatch/convexandlinearoptimization) (Primal-dual path following) to solve a linear program in canonical form."
-    " If the problem is entered in standard form, it is converted to canonical form.")
+    " If the problem is entered in standard form, it is converted to canonical form. For two-variable problems in standard form, the feasible region and solutions are graphed.")
 st.header("Standard and canonical form notation")
 st.markdown("The canonical form problem has $m$ constraints and $n$ variables:")
 col = st.beta_columns(2)
@@ -414,22 +414,22 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         f = x_full.dot(c_full)
         ax = matrix_full.dot(x_full)
         if not variable_dict["standard"]:
-            if any([abs(i) > 0.001 for i in (ax - b)]):
-                st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
-                df = pd.DataFrame(data, columns=alist)
-                st.markdown("""
-                    <style>
-                    table td:nth-child(1) {
-                        display: none
-                    }
-                    table th:nth-child(1) {
-                        display: none
-                    }
-                    </style>
-                    """, unsafe_allow_html=True)
-                # st.dataframe(df)
-                st.table(df)
-                st.stop()
+            #if any([abs(i) > 0.001 for i in (ax - b)]):
+            #    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
+            #    df = pd.DataFrame(data, columns=alist)
+            #    st.markdown("""
+            #        <style>
+            #        table td:nth-child(1) {
+            #            display: none
+            #        }
+            #        table th:nth-child(1) {
+            #            display: none
+            #        }
+            #        </style>
+            #        """, unsafe_allow_html=True)
+            #    # st.dataframe(df)
+            #    st.table(df)
+            #    st.stop()
 
         if variable_dict["advanced"]:
             if variable_dict["standard"]: #Advanced, standard
