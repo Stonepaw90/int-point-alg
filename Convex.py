@@ -11,7 +11,7 @@ import math
 import streamlit as st
 from functools import reduce
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title = "Convex Interior Point Algorithm", layout="wide")
 
 
 variable_dict = {"shortcut": False, "show_symbo": False, "show_numeric": False, "show_all_numeric": False, "feasible": False, "pos": False}
