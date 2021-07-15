@@ -3,19 +3,44 @@ import numpy as np
 import pandas as pd
 import sympy
 
-from st_aggrid import AgGrid, DataReturnMode, GridUpdateMode, GridOptionsBuilder
-
-st.set_page_config(layout="wide")
+from st_aggrid import AgGrid#, DataReturnMode, GridUpdateMode, GridOptionsBuilder
 
 import matplotlib.pyplot as plt
 from scipy.spatial import HalfspaceIntersection, ConvexHull
 from scipy.optimize import linprog
 
+
+#Source code is here https://github.com/Stonepaw90/int-point-alg
+
+
+
+
+#Thanks to stackoverflow user Pierre D for the many functions to graph the feasible region, inequalities
+#https://stackoverflow.com/a/65344728
+
+#Thanks to github user PablocFonseca for putting AgGrid in streamlit
+#https://discuss.streamlit.io/t/ag-grid-component-with-input-support/8108
+
+#Thanks to streamlit creator ash2shukla for how to write a nice table
+#https://discuss.streamlit.io/t/questions-on-st-table/6878/3
+
+#Big thanks to my brother Ben for helping me code the columns in the detailed numeric output
+#https://github.com/TheBengineer
+
+
+#Thanks to Dr. Michael Veatch for polishing this with me, over and over again
+
+
+
+
+
+st.set_page_config(layout="wide")
+
+
 def feasible_point(A, b):
     # finds the center of the largest sphere fitting in the convex hull
     norm_vector = np.linalg.norm(A, axis=1)
     A_ = np.hstack((A, norm_vector[:, None]))
-    b_ = b[:, None]
     c = np.zeros((A.shape[1] + 1,))
     c[-1] = -1
     res = linprog(c, A_ub=A_, b_ub=b[:, None], bounds=(None, None))
@@ -63,6 +88,7 @@ def plot_convex_set(A, b, bbox, ax=None):
     ax.fill(points[:, 0], points[:, 1], 'gray')
     return points, interior_point, hs
 
+
 def plot_inequalities(A, b, bbox, ax=None):
     # solve and plot the convex set,
     # the inequation lines, and
@@ -73,7 +99,6 @@ def plot_inequalities(A, b, bbox, ax=None):
         plt_halfspace(a_k, b_k, bbox, ax)
     return points, interior_point, hs
 
-#plt.rcParams['figure.figsize'] = (6, 3)
 variable_dict = {"advanced": False, "update 11.26": False, "standard": False, "done": False, "ex 11.7":False}
 
 st.title("Interior Point Algorithm for Linear Programs")
@@ -152,6 +177,7 @@ with col[0]:
         key=matrix_key
     )
 # Convert Matrix, catching errors. Errors lead to a stop that prints out the matrix and your matrix shape (m_s, n_s).
+
 try:
     messy_matrix = response['data'].replace("nan", "")
     messy_matrix.replace(to_replace="", value=np.nan, inplace=True)
@@ -431,11 +457,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
     }
     </style>
     """, unsafe_allow_html=True)
-    # st.dataframe(df)
     st.table(df)
-    #st.markdown("Note: Unlike table 11.2, in this table, the $\mu$ used in each row was used to compute that row")
-    #st.markdown("Note: Unlike table 11.2, the $\mu$ used on each row of this table was used to compute that row.")
-    #st.markdown("Note: In this table each row is used to compute the next row, which differs from table 11.2 which places each $\mu$ on the row it computes.")
     st.markdown("Note: In this table the $\mu$ in a row is used to compute the next row, while Table 11.2 reports $\mu$ in the row it was used to compute.")
     col_help = 0
 
@@ -522,13 +544,33 @@ def digit_fix(subs):
                 subs[i] = 0
     return (subs)
 
+def constraint_string(rowc, b_val):
+    #rowc is a list. Like [4.0, 3.0, 1, 2]
+    #b is the <= list. Like [11, 4]
+    #returns 4x + 3y < 11
+    if rowc[0] % 1 == 0:
+        rowc = [int(rowc[0]), rowc[1]]
+    if rowc[1] % 1 == 0:
+        rowc = [rowc[0], int(rowc[1])]
+    legstring = ""
+    if rowc[0] != 0:
+        legstring += f"{str() if rowc[0] == 1 else str(rowc[0])}x"
+        if rowc[1] > 0:
+            legstring += " + " + f"{str() if rowc[1] == 1 else str(rowc[1])}y"
+        if rowc[1] < 0:
+            legstring += " - " + f"{str() if rowc[1] == 1 else str(-rowc[1])}y"
+        if rowc[1] == 0:
+            pass
+    else:
+        legstring += f"{str() if rowc[1] == 1 else str(rowc[1])}y"
+    if b_val % 1 == 0:
+        legstring += " = " + str(int(b_val))
+    else:
+        legstring += " = " + str(b_val)
+    return legstring
 
 
-
-
-#if st.button("Detailed output of all iterations.") and variable_dict["done"]:
 if variable_dict["done"]:
-    #if not variable_dict['standard'] and n_plot == 2:
     if n_plot == 2:
         make_plot = st.checkbox("Graph feasible region and iterations.")
         if make_plot:
@@ -538,17 +580,12 @@ if variable_dict["done"]:
             with col[1]:
                 boundaries = st.empty()
                 legend_print = st.empty()
+                slider = st.empty()
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
     mu = mu_initial*2
-
-
     f = x.dot(c)
-    # if variable_dict["update 11.26"]:
-    #    mu = gamma * np.dot(x, w) / len(x)
-    # else:
-    #    mu = 5
     iter = 0
     st.write("Detailed output of all iterations is below.")
     st.write("# ")
@@ -562,14 +599,6 @@ if variable_dict["done"]:
         dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
         dw = matrix_full.T.dot(dy)
         dx = diagwinv.dot(vmu - diagx.dot(dw))
-        #matrix_string = ["\\mathbf{X}", "\\mathbf{W}", "\\mathbf{X}\\mathbf{W}^{-1}",
-        #                 "\mu\\mathbf{1}", "\\mathbf{XW1}", "\\mathbf{v}(\\mu)",
-        #                 "A", "\\mathbf{AX}\\mathbf{W}^{-1}\\mathbf{A}^T",
-        #                 "\\mathbf{d}^x", "\\mathbf{d}^y", "\\mathbf{d}^w"]
-        #matrix_string = ["X", "W", "XW^{-1}",
-        #                 "\mu1", "XW1", "v(\\mu)",
-        #                 "A", "AXW^{-1}A^T",
-        #                 "d^x", "d^y", "d^w"]
         matrix_string = ["X", "W", "XW^{-1}",
                          None, None, "v(\\mu)",
                          "A", "AXW^{-1}A^T",
@@ -594,7 +623,6 @@ if variable_dict["done"]:
                     st.latex("v(\mu) = " + muone + "-"
                              + xwone + "= " + vmulatex)
                 col_help = 0
-                #v(\mu) = [values of \mu1] – [values of XW1] = [values of v]
             elif i in [0, 1, 2, 6, 7]:
                 with col[col_help % 3]:
                     if i == 6:
@@ -675,12 +703,12 @@ if variable_dict["done"]:
         iter += 1
         st.write("""---""")
         assert iter <= len(df), "Too many iterations"
-    #if all([n_plot ==2, variable_dict['standard']]):
 
     if n_plot == 2:
         if make_plot:
             bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
             legend_show = legend_print.checkbox("Show legend?", True)
+            obj = slider.slider("Objective function value", min_value = 0.0, max_value = round(df['Objective'][len(df)-1]+5,1), step = 0.1)
             try:
                 bbox = [float(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
@@ -690,46 +718,32 @@ if variable_dict["done"]:
                     plot_inequalities(matrix_small, b, bbox, ax=ax)
                 else:
                     plot_inequalities(matrix_small[:,:2], b, bbox, ax=ax)
+                if obj > 0:
+                    ax.plot([0, obj / c[0]], [obj / c[1], 0], "r-")
                 go = ax.plot(*df['x'][0][:2], 'go', label = "Initial point")
+
 
                 for i in range(len(df['x'])-1):
                     bo = ax.plot(*df['x'][i+1][:2], 'bo', label = "Improving Point")
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
+
                 #ro = ax.plot(*df['x'][i+1][:2], 'ro', label = "Epsilon-optimal Point")
                 legend_l = []
                 for i in range(m_s):
-                    rowc = matrix_small[i]
-                    if rowc[0]%1 == 0:
-                        rowc[0] = int(rowc[0])
-                    if rowc[1] % 1 == 0:
-                        rowc[1] = int(rowc[1])
-                    xstr = "x + "
-                    ystr = "y"
-                    legstring = ""
-                    if rowc[0] != 0:
-                        legstring += str(rowc[0]) + "x"
-                        if rowc[1] > 0:
-                            legstring += " + " + str(rowc[1]) + "y"
-                        if rowc[1] < 0:
-                            legstring += " - " + str(-rowc[1]) + "y"
-                        if rowc[1] == 0:
-                            pass
-                    else:
-                        legstring += str(rowc[1]) + "y"
-                    legstring += " <= " + str(b[i])
-
-                    legend_l.append(legstring)
-                    #legend_l.append(str(matrix_small[i][0]) + "x + " + str(matrix_small[i][1]) + "y <= " + str(b[i]))
+                    row_con = matrix_small[i]
+                    legend_l.append(constraint_string(row_con, b[i]))
+                if obj > 0:
+                    legend_l.append(constraint_string(c[:2], obj))
                 legend_l.append("Initial")
                 #legend_l.append("Improving")
                 #legend_l.append("Epsilon-optimal")
                 plt.xlabel("x")
                 plt.ylabel("y")
                 if legend_show:
-                    ax.legend(legend_l)
-                    
-                @st.cache
+                    if variable_dict['ex 11.7']:
+                        ax.legend(legend_l, loc = "upper right")
+                    else:
+                        ax.legend(legend_l)
                 plot_space.pyplot(fig)
             except:
-                pass
-    #            plot_space.write("Plotting failed.")
+                plot_space.header("Plotting failed.")
