@@ -33,7 +33,7 @@ from scipy.optimize import linprog
 
 
 
-
+constraint_slider = False #Feature I don't want but want to be able to toggle
 st.set_page_config(layout="wide")
 
 
@@ -580,7 +580,8 @@ if variable_dict["done"]:
             with col[1]:
                 boundaries = st.empty()
                 legend_print = st.empty()
-                slider = st.empty()
+                if constraint_slider:
+                    slider = st.empty()
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
@@ -708,7 +709,7 @@ if variable_dict["done"]:
         if make_plot:
             bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
             legend_show = legend_print.checkbox("Show legend?", True)
-            obj = slider.slider("Objective function value", min_value = 0.0, max_value = round(df['Objective'][len(df)-1]+5,1), step = 0.1)
+
             try:
                 bbox = [float(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
@@ -718,8 +719,11 @@ if variable_dict["done"]:
                     plot_inequalities(matrix_small, b, bbox, ax=ax)
                 else:
                     plot_inequalities(matrix_small[:,:2], b, bbox, ax=ax)
-                if obj > 0:
-                    ax.plot([0, obj / c[0]], [obj / c[1], 0], "r-")
+                if constraint_slider:
+                    obj = slider.slider("Objective function value", min_value=0.0,
+                                        max_value=round(df['Objective'][len(df) - 1] + 5, 1), step=0.1)
+                    if obj > 0:
+                        ax.plot([0, obj / c[0]], [obj / c[1], 0], "r-")
                 go = ax.plot(*df['x'][0][:2], 'go', label = "Initial point")
 
 
@@ -732,8 +736,9 @@ if variable_dict["done"]:
                 for i in range(m_s):
                     row_con = matrix_small[i]
                     legend_l.append(constraint_string(row_con, b[i]))
-                if obj > 0:
-                    legend_l.append(constraint_string(c[:2], obj))
+                if constraint_slider:
+                    if obj > 0:
+                        legend_l.append(constraint_string(c[:2], obj))
                 legend_l.append("Initial")
                 #legend_l.append("Improving")
                 #legend_l.append("Epsilon-optimal")
