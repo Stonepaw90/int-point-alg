@@ -368,7 +368,7 @@ data = []
 
 
 if variable_dict["done"]:  # All branches get here, once data has been verified.
-    variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=False)
+    variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=True)
     mu_e = "{:2.1E}".format(mu)
     ###ITERATION 0 ROW
     if variable_dict["advanced"]:
@@ -399,8 +399,9 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             st.stop()
         dw = matrix_full.T.dot(dy)
         dx = diagwinv.dot(vmu - diagx.dot(dw))
-        betap = min(1, min([alpha * j for j in [-x_full[i] / dx[i] if dx[i] < 0 else 1000 for i in range(n_full)]]))
-        betad = min(1, min([alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 1000 for i in range(n_full)]]))
+        betap = min(1, min([alpha * j for j in [-x_full[i] / dx[i] if dx[i] < 0 else 100 for i in range(n_full)]]))
+        betad = min(1, min([alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 100 for i in range(n_full)]]))
+        
         x_full += betap * dx
         y += betad * dy
         w += betad * dw
@@ -599,7 +600,7 @@ if variable_dict["done"]:
     st.write("# ")
     st.write("""---""")
     st.write("# ")
-    while not np.dot(x_full, w) < epsilon:
+    while np.dot(x_full, w) >= epsilon:
         diagx = np.diagflat(x_full)
         diagw = np.diagflat(w)
         diagwinv = np.array([1 / i if i != 0 else 0 for i in np.nditer(diagw)]).reshape((n_full, n_full))
@@ -759,3 +760,4 @@ if variable_dict["done"]:
                 plot_space.pyplot(fig)
             except:
                 plot_space.header("Plotting failed.")
+st.write(iter)
