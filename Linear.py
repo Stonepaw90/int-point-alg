@@ -369,7 +369,7 @@ data = []
 
 if variable_dict["done"]:  # All branches get here, once data has been verified.
     variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=False)
-     mu_e = "{:2.1E}".format(mu)
+    mu_e = "{:2.1E}".format(mu)
     ###ITERATION 0 ROW
     if variable_dict["advanced"]:
         # IN CANONICAL FORM THERE IS NO S TO PRINT! We're already printing x_full.
