@@ -708,7 +708,10 @@ if variable_dict["done"]:
         x_full += betap * dx
         y += betad * dy
         w += betad * dw
-        mu *= gamma
+        if variable_dict["update 11.26"]:
+            mu = gamma * x_full.dot(w) / (m_s + n_s)
+        else:
+            mu *= gamma
         iter += 1
         st.write("""---""")
         assert iter <= len(df), "Too many iterations"
