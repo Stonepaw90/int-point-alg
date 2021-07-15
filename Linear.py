@@ -34,8 +34,7 @@ from scipy.optimize import linprog
 
 
 constraint_slider = False #Feature I don't want but want to be able to toggle
-st.set_page_config(layout="wide")
-
+st.set_page_config(page_title = "Linear Interior Point Algorithm", layout="wide")
 
 def feasible_point(A, b):
     # finds the center of the largest sphere fitting in the convex hull
