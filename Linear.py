@@ -387,7 +387,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         else:  # Not advanced, canonical
             data.append(round_list([iter, mu, x_full.dot(w), f, x_full], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
-    while not np.dot(x_full, w) < epsilon:
+    while np.dot(x_full, w) >= epsilon:
         diagx = np.diagflat(x_full)
         diagw = np.diagflat(w)
         # diagwinv = np.linalg.inv(diagw)
@@ -430,10 +430,15 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             #    # st.dataframe(df)
             #    st.table(df)
             #    st.stop()
-
+        st.write("xw", np.dot(x_full, w))
+        st.write("xw2", x_full.dot(w))
+        st.write("x", x_full)
+        
         if variable_dict["advanced"]:
             if variable_dict["standard"]: #Advanced, standard
                 data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
+                st.write("s", s)
+                
             else: #Advanced, canonical
                 data.append(round_list([iter, mu, x_full.dot(w), f, x_full, y, w], make_tuple=True))
         else:
@@ -445,19 +450,6 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         if iter >= 15:
             st.write("The program terminated, as after 15 iterations, the duality gap was still more than epsilon.")
             break
-            #df = pd.DataFrame(data, columns=alist)
-            #st.markdown("""
-            #<style>
-            #table td:nth-child(1) {
-            #    display: none
-            #}
-            #table th:nth-child(1) {
-            #    display: none
-            #}
-            #</style>
-            #""", unsafe_allow_html=True)
-            #st.table(df)
-            #st.stop()
     df = pd.DataFrame(data, columns=alist)
     st.markdown("""
     <style>
