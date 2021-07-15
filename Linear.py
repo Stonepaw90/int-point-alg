@@ -157,7 +157,6 @@ else:
     col_n = 1
 
 st.markdown("## Coefficient matrix A")
-# Standard
 st.markdown("Write your matrix in the top-left of this entry grid. The maximum size is 10 x 10.")
 st.write(
     "Press enter or tab to confirm your edits.")
@@ -375,14 +374,14 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
     if variable_dict["advanced"]:
         # IN CANONICAL FORM THERE IS NO S TO PRINT! We're already printing x_full.
         if variable_dict["standard"]: #Standard, advanced
-            data.append(round_list([iter, mu, x_full.dot(w), f, x, s, y, w], make_tuple=True))
+            data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "s", "y", "w"]
         else: #Canonical, advanced
             data.append(round_list([iter, mu, x_full.dot(w), f, x_full, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
     else:
         if variable_dict["standard"]:  # Not Advanced, and Standard
-            data.append(round_list([iter, mu, x_full.dot(w), f, x], make_tuple=True))
+            data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
         else:  # Not advanced, canonical
             data.append(round_list([iter, mu, x_full.dot(w), f, x_full], make_tuple=True))
@@ -430,15 +429,9 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             #    # st.dataframe(df)
             #    st.table(df)
             #    st.stop()
-        st.write("xw", np.dot(x_full, w))
-        st.write("xw2", x_full.dot(w))
-        st.write("x", x_full)
-        
         if variable_dict["advanced"]:
             if variable_dict["standard"]: #Advanced, standard
-                data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
-                st.write("s", s)
-                
+                data.append(round_list([iter, mu, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))                
             else: #Advanced, canonical
                 data.append(round_list([iter, mu, x_full.dot(w), f, x_full, y, w], make_tuple=True))
         else:
@@ -447,6 +440,15 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             else:  # Not advanced, canonical
                 data.append(round_list([iter, mu, x_full.dot(w), f, x_full], make_tuple=True))
 
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
         if iter >= 15:
             st.write("The program terminated, as after 15 iterations, the duality gap was still more than epsilon.")
             break
