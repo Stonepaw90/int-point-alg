@@ -444,19 +444,20 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
 
         if iter >= 15:
             st.write("The program terminated, as after 15 iterations, the duality gap was still more than epsilon.")
-            df = pd.DataFrame(data, columns=alist)
-            st.markdown("""
-            <style>
-            table td:nth-child(1) {
-                display: none
-            }
-            table th:nth-child(1) {
-                display: none
-            }
-            </style>
-            """, unsafe_allow_html=True)
-            st.table(df)
-            st.stop()
+            break
+            #df = pd.DataFrame(data, columns=alist)
+            #st.markdown("""
+            #<style>
+            #table td:nth-child(1) {
+            #    display: none
+            #}
+            #table th:nth-child(1) {
+            #    display: none
+            #}
+            #</style>
+            #""", unsafe_allow_html=True)
+            #st.table(df)
+            #st.stop()
     df = pd.DataFrame(data, columns=alist)
     st.markdown("""
     <style>
