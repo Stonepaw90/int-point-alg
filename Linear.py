@@ -729,7 +729,7 @@ if variable_dict["done"]:
                 for i in range(len(df['x'])-1):
                     bo = ax.plot(*df['x'][i+1][:2], 'bo', label = "Improving Point")
                     ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
-
+                go = ax.plot(*df['x'][0][:2], 'go', label = "Initial point")
                 #ro = ax.plot(*df['x'][i+1][:2], 'ro', label = "Epsilon-optimal Point")
                 legend_l = []
                 for i in range(m_s):
