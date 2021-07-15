@@ -3,38 +3,34 @@ import numpy as np
 import pandas as pd
 import sympy
 
-from st_aggrid import AgGrid#, DataReturnMode, GridUpdateMode, GridOptionsBuilder
+from st_aggrid import AgGrid  # , DataReturnMode, GridUpdateMode, GridOptionsBuilder
 
 import matplotlib.pyplot as plt
 from scipy.spatial import HalfspaceIntersection, ConvexHull
 from scipy.optimize import linprog
 
-
-#Source code is here https://github.com/Stonepaw90/int-point-alg
-
+# Source code is here https://github.com/Stonepaw90/int-point-alg
 
 
+# Thanks to stackoverflow user Pierre D for the many functions to graph the feasible region, inequalities
+# https://stackoverflow.com/a/65344728
 
-#Thanks to stackoverflow user Pierre D for the many functions to graph the feasible region, inequalities
-#https://stackoverflow.com/a/65344728
+# Thanks to github user PablocFonseca for putting AgGrid in streamlit
+# https://discuss.streamlit.io/t/ag-grid-component-with-input-support/8108
 
-#Thanks to github user PablocFonseca for putting AgGrid in streamlit
-#https://discuss.streamlit.io/t/ag-grid-component-with-input-support/8108
+# Thanks to streamlit creator ash2shukla for how to write a nice table
+# https://discuss.streamlit.io/t/questions-on-st-table/6878/3
 
-#Thanks to streamlit creator ash2shukla for how to write a nice table
-#https://discuss.streamlit.io/t/questions-on-st-table/6878/3
-
-#Big thanks to my brother Ben for helping me code the columns in the detailed numeric output
-#https://github.com/TheBengineer
-
-
-#Thanks to Dr. Michael Veatch for polishing this with me, over and over again
+# Big thanks to my brother Ben for helping me code the columns in the detailed numeric output
+# https://github.com/TheBengineer
 
 
+# Thanks to Dr. Michael Veatch for polishing this with me, over and over again
 
 
-constraint_slider = False #Feature I don't want but want to be able to toggle
-st.set_page_config(page_title = "Linear Interior Point Algorithm", layout="wide")
+constraint_slider = False  # Feature I don't want but want to be able to toggle
+st.set_page_config(page_title="Linear Interior Point Algorithm", layout="wide")
+
 
 def feasible_point(A, b):
     # finds the center of the largest sphere fitting in the convex hull
@@ -45,28 +41,32 @@ def feasible_point(A, b):
     res = linprog(c, A_ub=A_, b_ub=b[:, None], bounds=(None, None))
     return res.x[:-1]
 
+
 def hs_intersection(A, b):
     interior_point = feasible_point(A, b)
     halfspaces = np.hstack((A, -b[:, None]))
     hs = HalfspaceIntersection(halfspaces, interior_point)
     return hs
 
+
 def plt_halfspace(a, b, bbox, ax):
     if a[1] == 0:
         ax.axvline(b / a[0])
     else:
         x = np.linspace(bbox[0][0], bbox[0][1], 100)
-        ax.plot(x, (b - a[0]*x) / a[1])
+        ax.plot(x, (b - a[0] * x) / a[1])
+
 
 def add_bbox(A, b, xrange, yrange):
     A = np.vstack((A, [
-        [-1,  0],
-        [ 1,  0],
-        [ 0, -1],
-        [ 0,  1],
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1],
     ]))
     b = np.hstack((b, [-xrange[0], xrange[1], -yrange[0], yrange[1]]))
     return A, b
+
 
 def solve_convex_set(A, b, bbox, ax=None):
     A_, b_ = add_bbox(A, b, *bbox)
@@ -75,6 +75,7 @@ def solve_convex_set(A, b, bbox, ax=None):
     points = hs.intersections
     hull = ConvexHull(points)
     return points[hull.vertices], interior_point, hs
+
 
 def plot_convex_set(A, b, bbox, ax=None):
     # solve and plot just the convex set (no lines for the inequations)
@@ -93,12 +94,13 @@ def plot_inequalities(A, b, bbox, ax=None):
     # the inequation lines, and
     # the interior point that was used for the halfspace intersections
     points, interior_point, hs = plot_convex_set(A, b, bbox, ax=ax)
-    #ax.plot(*interior_point, 'o')
+    # ax.plot(*interior_point, 'o')
     for a_k, b_k in zip(A, b):
         plt_halfspace(a_k, b_k, bbox, ax)
     return points, interior_point, hs
 
-variable_dict = {"advanced": False, "update 11.26": False, "standard": False, "done": False, "ex 11.7":False}
+
+variable_dict = {"advanced": False, "update 11.26": False, "standard": False, "done": False, "ex 11.7": False}
 
 st.title("Interior Point Algorithm for Linear Programs")
 st.markdown('''
@@ -133,8 +135,11 @@ st.write(
     "Strict feasibility for the primal requires $\\bar{x}>0, s>0$. Strict feasibility for the dual requires $w > 0$.")
 st.write(
     "Enter the problem, strictly feasible initial solutions, and parameters.")
+
+
 def lt(x):
     return (sympy.latex(sympy.Matrix(x)))
+
 
 # You can choose if standard or not standard.
 variable_dict['standard'] = st.checkbox("Standard form", value=False)
@@ -142,14 +147,15 @@ if variable_dict["standard"]:
     variable_dict["ex 11.7"] = st.checkbox("Load Example 11.7", value=False)
 if variable_dict["ex 11.7"]:
     matrix_small = np.array([[1.5, 1], [1, 1], [0, 1]])
-    input_dataframe = pd.DataFrame(matrix_small, index=[str(i + 1) for i in range(3)], columns=[str(i + 1) for i in range(2)])
+    input_dataframe = pd.DataFrame(matrix_small, index=[str(i + 1) for i in range(3)],
+                                   columns=[str(i + 1) for i in range(2)])
     default_var = ["16 12 10", "4 3", "3.0 3.0", "2.0 2.0 1.0"]
     width = 35
-    grid_height = 335/2.2
+    grid_height = 335 / 2.2
     matrix_key = "11.7"
     col_n = 2
 else:
-    default_var = ["","","",""]
+    default_var = ["", "", "", ""]
     input_dataframe = pd.DataFrame('', index=[str(i + 1) for i in range(10)], columns=[str(i + 1) for i in range(10)])
     width = 15
     matrix_key = "not"
@@ -166,9 +172,9 @@ with col[0]:
         input_dataframe,
         height=grid_height,
         width='100%',
-        suppressMenu = True, #This line removes the filter
+        suppressMenu=True,  # This line removes the filter
         editable=True,
-        #filter = False,
+        # filter = False,
         sortable=False,
         resizable=True,
         fit_columns_on_grid_load=False,
@@ -211,21 +217,23 @@ if m_s > 0 and n_s > 0:
     with col[0]:
         try:
             b = np.array([float(i) for i in
-                      st.text_input(f"Right-hand side b (a {m_s}-vector)", value=default_var[0]).split(" ") if i]) # 2 1
+                          st.text_input(f"Right-hand side b (a {m_s}-vector)", value=default_var[0]).split(" ") if
+                          i])  # 2 1
         except:
             st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
             st.stop()
     if variable_dict["standard"]:
         n_full = n_s + m_s
         n_plot = n_s
-    else: #n_s is already big!
+    else:  # n_s is already big!
         n_full = n_s
         n_plot = n_s - m_s
     with col[1]:
         try:
             c = np.array([float(i) for i in
-                      st.text_input(f"Objective function coefficients c (a {n_s}-vector)", value=default_var[1]).split(
-                          " ") if i]) #1 2 0 0
+                          st.text_input(f"Objective function coefficients c (a {n_s}-vector)",
+                                        value=default_var[1]).split(
+                              " ") if i])  # 1 2 0 0
         except:
             st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
             st.stop()
@@ -234,14 +242,14 @@ if m_s > 0 and n_s > 0:
     with col[0]:
         try:
             x = np.array([float(i) for i in
-                      st.text_input(f"x (a {n_s}-vector)", value=default_var[2]).split(" ") if i]) #1 0.5 0.5 1.5
+                          st.text_input(f"x (a {n_s}-vector)", value=default_var[2]).split(" ") if i])  # 1 0.5 0.5 1.5
         except:
             st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
             st.stop()
     with col[1]:
         try:
             y = np.array([float(i) for i in
-                      st.text_input(f"y (a {m_s}-vector)", value=default_var[3]).split(" ") if i]) #2 0.5
+                          st.text_input(f"y (a {m_s}-vector)", value=default_var[3]).split(" ") if i])  # 2 0.5
         except:
             st.write("Enter vectors using spaces between entries, e.g., \"1 4.1 3 2.0\".")
             st.stop()
@@ -259,15 +267,16 @@ if m_s > 0 and n_s > 0:
         epsilon = st.number_input(r"""""", value=0.01, step=0.001, format="%f", min_value=0.00001,
                                   help=r"""Stop the algorithm once $x^Tw< \epsilon$. $\hspace{13px} \epsilon > 0$""")
         st.write("""$\mu$: Initial complementary slackness parameter.""")
-        mu = st.number_input("", value=5.0, step=0.1, help = r"""$\mu > 0$""") #0.25
+        mu = st.number_input("", value=5.0, step=0.1, help=r"""$\mu > 0$""")  # 0.25
     variable_dict["done"] = st.checkbox("Solve")
 
 
-def is_neg(x, strict = True):
+def is_neg(x, strict=True):
     if not strict:
         return any([i < 0 for i in x])
     else:
         return any([i <= 0 for i in x])
+
 
 def round_list(list, make_tuple=False):
     for i in range(len(list)):
@@ -289,7 +298,7 @@ def round_list(list, make_tuple=False):
     return list
 
 
-if variable_dict["done"]:  #Once solve is pressed
+if variable_dict["done"]:  # Once solve is pressed
     # Always run! Ex 11.7, standard, canonical, this is always run.
     # By this point, crucially, our data has been marked as correct. We should still check this.
 
@@ -310,7 +319,7 @@ if variable_dict["done"]:  #Once solve is pressed
         c_full = c
         try:
             if type(matrix_full.dot(x_full) - b) is str:
-                pass #Why this code? It checks that matrix_full, x_full, and b are the right size.
+                pass  # Why this code? It checks that matrix_full, x_full, and b are the right size.
         except:
             st.write("The given vectors have incorrect dimensions.")
             st.stop()
@@ -326,11 +335,11 @@ if variable_dict["done"]:  #Once solve is pressed
     except:
         st.write("The given vectors have incorrect dimensions.")
         st.stop()
-    #I don't know why this was so difficult! I'm saving these initial values for later.
+    # I don't know why this was so difficult! I'm saving these initial values for later.
     w_initial = list(w)
     x_initial = list(x_full)
     y_initial = list(y)
-    mu_initial = mu/2 #This is not an error, as mu_initial will be doubled later
+    mu_initial = mu / 2  # This is not an error, as mu_initial will be doubled later
     if variable_dict["standard"]:
         st.latex("A = " + sympy.latex(sympy.Matrix(matrix_full)))
     col = st.beta_columns(5)
@@ -365,20 +374,21 @@ if variable_dict["done"]:  #Once solve is pressed
 iter = 0
 data = []
 
-
-
 if variable_dict["done"]:  # All branches get here, once data has been verified.
     variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=True)
     mu_e = "{:2.1E}".format(mu)
     ###ITERATION 0 ROW
     if variable_dict["advanced"]:
         # IN CANONICAL FORM THERE IS NO S TO PRINT! We're already printing x_full.
-        if variable_dict["standard"]: #Standard, advanced
+        if variable_dict["standard"]:  # Standard, advanced
             data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "s", "y", "w"]
-        else: #Canonical, advanced
-            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
-            alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
+        else:  # Canonical, advanced
+            #data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
+            #alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
+
+            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full], make_tuple=True))
+            alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
     else:
         if variable_dict["standard"]:  # Not Advanced, and Standard
             data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
@@ -393,7 +403,8 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         diagwinv = np.array([1 / i if i != 0 else 0 for i in np.nditer(diagw)]).reshape((n_full, n_full))
         vmu = mu * np.ones(n_full) - diagx.dot(diagw).dot(np.ones(n_full))
         try:
-            dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
+            dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(
+                diagwinv).dot(vmu)
         except:
             st.latex("AXW^{-1}A^T \\text{ Could not be inverted. This may be due to redundant constraints.}")
             st.stop()
@@ -401,7 +412,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         dx = diagwinv.dot(vmu - diagx.dot(dw))
         betap = min(1, min([alpha * j for j in [-x_full[i] / dx[i] if dx[i] < 0 else 100 for i in range(n_full)]]))
         betad = min(1, min([alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 100 for i in range(n_full)]]))
-        
+
         x_full += betap * dx
         y += betad * dy
         w += betad * dw
@@ -413,43 +424,35 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         iter += 1
         f = x_full.dot(c_full)
         ax = matrix_full.dot(x_full)
-        #if not variable_dict["standard"]:
-            #if any([abs(i) > 0.001 for i in (ax - b)]):
-            #    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
-            #    df = pd.DataFrame(data, columns=alist)
-            #    st.markdown("""
-            #        <style>
-            #        table td:nth-child(1) {
-            #            display: none
-            #        }
-            #        table th:nth-child(1) {
-            #            display: none
-            #        }
-            #        </style>
-            #        """, unsafe_allow_html=True)
-            #    # st.dataframe(df)
-            #    st.table(df)
-            #    st.stop()
+        # if not variable_dict["standard"]:
+        # if any([abs(i) > 0.001 for i in (ax - b)]):
+        #    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
+        #    df = pd.DataFrame(data, columns=alist)
+        #    st.markdown("""
+        #        <style>
+        #        table td:nth-child(1) {
+        #            display: none
+        #        }
+        #        table th:nth-child(1) {
+        #            display: none
+        #        }
+        #        </style>
+        #        """, unsafe_allow_html=True)
+        #    # st.dataframe(df)
+        #    st.table(df)
+        #    st.stop()
         if variable_dict["advanced"]:
-            if variable_dict["standard"]: #Advanced, standard
-                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))                
-            else: #Advanced, canonical
-                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
+            if variable_dict["standard"]:  # Advanced, standard
+                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
+            else:  # Advanced, canonical
+                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full], make_tuple=True))
+                #data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
         else:
             if variable_dict["standard"]:  # Not Advanced, and Standard
                 data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
             else:  # Not advanced, canonical
                 data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full], make_tuple=True))
 
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
         if iter >= 15:
             st.write("The program terminated, as after 15 iterations, the duality gap was still more than epsilon.")
             break
@@ -465,7 +468,8 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
     </style>
     """, unsafe_allow_html=True)
     st.table(df)
-    st.markdown("Note: In this table the $\mu$ in a row is used to compute the next row, while Table 11.2 reports $\mu$ in the row it was used to compute.")
+    st.markdown(
+        "Note: In this table the $\mu$ in a row is used to compute the next row, while Table 11.2 reports $\mu$ in the row it was used to compute.")
     col_help = 0
 
 
@@ -551,10 +555,11 @@ def digit_fix(subs):
                 subs[i] = 0
     return (subs)
 
+
 def constraint_string(rowc, b_val):
-    #rowc is a list. Like [4.0, 3.0, 1, 2]
-    #b is the <= list. Like [11, 4]
-    #returns 4x + 3y < 11
+    # rowc is a list. Like [4.0, 3.0, 1, 2]
+    # b is the <= list. Like [11, 4]
+    # returns 4x + 3y < 11
     if rowc[0] % 1 == 0:
         rowc = [int(rowc[0]), rowc[1]]
     if rowc[1] % 1 == 0:
@@ -592,7 +597,7 @@ if variable_dict["done"]:
     w = np.array(w_initial)
     x_full = np.array(x_initial)
     y = np.array(y_initial)
-    mu = mu_initial*2
+    mu = mu_initial * 2
     f = x.dot(c)
     iter = 0
     st.write("Detailed output of all iterations is below.")
@@ -604,7 +609,8 @@ if variable_dict["done"]:
         diagw = np.diagflat(w)
         diagwinv = np.array([1 / i if i != 0 else 0 for i in np.nditer(diagw)]).reshape((n_full, n_full))
         vmu = mu * np.ones(n_full) - diagx.dot(diagw).dot(np.ones(n_full))
-        dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(vmu)
+        dy = np.linalg.inv(matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)).dot(matrix_full).dot(diagwinv).dot(
+            vmu)
         dw = matrix_full.T.dot(dy)
         dx = diagwinv.dot(vmu - diagx.dot(dw))
         matrix_string = ["X", "W", "XW^{-1}",
@@ -614,14 +620,14 @@ if variable_dict["done"]:
         complicated_eq = matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)
         matrix_list = round_list([np.diagflat([round(i, 4) for i in x_full]), np.diagflat([round(i, 4) for i in w]),
                                   diagx.dot(diagwinv).round(4),
-                                  #mu * np.ones(n_full), diagx.dot(diagw).dot(np.ones(n_full)), vmu,
+                                  # mu * np.ones(n_full), diagx.dot(diagw).dot(np.ones(n_full)), vmu,
                                   None, None, None,
                                   matrix_full, complicated_eq, dx, dy, dw], False)
-        st.markdown("### $k= "+str(iter) + "$")
+        st.markdown("### $k= " + str(iter) + "$")
         col = st.beta_columns(3)
         for i in range(len(matrix_string)):
             # col_help += 1
-            if i in [3,4]:
+            if i in [3, 4]:
                 pass
             elif i == 5:
                 with col[1]:
@@ -650,7 +656,7 @@ if variable_dict["done"]:
                                 st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
                                     sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
                             col_help = 0
-                    elif n_full < 6: #Happens with i == 0,1,2
+                    elif n_full < 6:  # Happens with i == 0,1,2
                         st.latex(matrix_string[i] + "=" + diagonal_matrix(matrix_list[i]))
                         col_help += 1
             else:
@@ -678,21 +684,23 @@ if variable_dict["done"]:
         betap = min(1, optionp)
         betad = min(1, optiond)
 
-        #betap
+        # betap
         l_string = "\\beta_P = \\text{min}\\{1, 0.9*\\text{min}\\{ "
         for i in range(n_full):
             if dx_r[i] < 0:
-                #empty = False
+                # empty = False
                 l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
-        l_string = l_string[:-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
+        l_string = l_string[
+                   :-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
         st.latex(l_string)
 
-        #betad
+        # betad
         l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\{ "
         for i in range(n_full):
             if dw_r[i] < 0:
                 l_string += "\\frac{" + str(w_r[i]) + "}{" + str(-dw_r[i]) + "},"
-        l_string = l_string[:-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optiond, 4)}" + "\\} = " + f"{round(betad, 4)}"
+        l_string = l_string[
+                   :-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optiond, 4)}" + "\\} = " + f"{round(betad, 4)}"
         st.latex(l_string)
         col = st.beta_columns(3)
         with col[0]:
@@ -717,31 +725,30 @@ if variable_dict["done"]:
 
     if n_plot == 2:
         if make_plot:
-            bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value = "[0,10],[0,10]")
+            bbox = boundaries.text_input("Plot area [x1, x2], [y1, y2]", value="[0,10],[0,10]")
             legend_show = legend_print.checkbox("Show legend?", True)
 
             try:
                 bbox = [float(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                 bbox = [bbox[0:2], bbox[2:]]
-                fig = plt.figure(figsize=(7,3), dpi = 80)
+                fig = plt.figure(figsize=(7, 3), dpi=80)
                 ax = plt.axes()
                 if variable_dict['standard']:
                     plot_inequalities(matrix_small, b, bbox, ax=ax)
                 else:
-                    plot_inequalities(matrix_small[:,:2], b, bbox, ax=ax)
+                    plot_inequalities(matrix_small[:, :2], b, bbox, ax=ax)
                 if constraint_slider:
                     obj = slider.slider("Objective function value", min_value=0.0,
                                         max_value=round(df['Objective'][len(df) - 1] + 5, 1), step=0.1)
                     if obj > 0:
                         ax.plot([0, obj / c[0]], [obj / c[1], 0], "r-")
-                go = ax.plot(*df['x'][0][:2], 'go', label = "Initial point")
+                go = ax.plot(*df['x'][0][:2], 'go', label="Initial point")
 
-
-                for i in range(len(df['x'])-1):
-                    bo = ax.plot(*df['x'][i+1][:2], 'bo', label = "Improving Point")
-                    ax.plot([df['x'][i][0],df['x'][i+1][0]],[df['x'][i][1],df['x'][i+1][1]], 'k-')
-                go = ax.plot(*df['x'][0][:2], 'go', label = "Initial point")
-                #ro = ax.plot(*df['x'][i+1][:2], 'ro', label = "Epsilon-optimal Point")
+                for i in range(len(df['x']) - 1):
+                    bo = ax.plot(*df['x'][i + 1][:2], 'bo', label="Improving Point")
+                    ax.plot([df['x'][i][0], df['x'][i + 1][0]], [df['x'][i][1], df['x'][i + 1][1]], 'k-')
+                go = ax.plot(*df['x'][0][:2], 'go', label="Initial point")
+                # ro = ax.plot(*df['x'][i+1][:2], 'ro', label = "Epsilon-optimal Point")
                 legend_l = []
                 for i in range(m_s):
                     row_con = matrix_small[i]
@@ -750,13 +757,13 @@ if variable_dict["done"]:
                     if obj > 0:
                         legend_l.append(constraint_string(c[:2], obj))
                 legend_l.append("Initial")
-                #legend_l.append("Improving")
-                #legend_l.append("Epsilon-optimal")
+                # legend_l.append("Improving")
+                # legend_l.append("Epsilon-optimal")
                 plt.xlabel("x")
                 plt.ylabel("y")
                 if legend_show:
                     if variable_dict['ex 11.7']:
-                        ax.legend(legend_l, loc = "upper right")
+                        ax.legend(legend_l, loc="upper right")
                     else:
                         ax.legend(legend_l)
                 plot_space.pyplot(fig)
