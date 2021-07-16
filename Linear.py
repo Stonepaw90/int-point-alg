@@ -624,7 +624,7 @@ if variable_dict["done"]:
     st.write("""---""")
     st.write("# ")
     #while np.dot(x_full, w) >= epsilon:
-    while iter <= len(df):
+    while iter < len(df):
         diagx = np.diagflat(x_full)
         diagw = np.diagflat(w)
         diagwinv = np.array([1 / i if i != 0 else 0 for i in np.nditer(diagw)]).reshape((n_full, n_full))
