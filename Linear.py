@@ -192,7 +192,6 @@ with col[0]:
     response = AgGrid(
         input_dataframe,
         cellStyle = cellsytle_jscode,
-        onCellValueChanged=js,
         height=grid_height,
         width='100%',
         suppressMenu=True,  # This line removes the filter
