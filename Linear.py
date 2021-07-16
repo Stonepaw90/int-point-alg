@@ -173,7 +173,7 @@ function(params) {
     if (params.node.rowIndex % 2 === 1)  {
         return {
             'color': 'black',
-            'backgroundColor': "#f0f0f5"
+            'backgroundColor': "#f9f9ff"
         }        
     } else {
         return {
