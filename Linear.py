@@ -170,15 +170,10 @@ col = st.beta_columns(2)
 
 cellsytle_jscode = JsCode("""
 function(params) {
-    if (params.value == 'A') {
-        return {
-            'color': 'white',
-            'backgroundColor': 'darkred'
-        }
-    } else if (params.node.rowIndex % 2 === 1)  {
+    if (params.node.rowIndex % 2 === 1)  {
         return {
             'color': 'black',
-            'backgroundColor': "#f9f9ff"
+            'backgroundColor': "#f0f0f5"
         }        
     } else {
         return {
@@ -190,6 +185,7 @@ function(params) {
 """)
 with col[0]:
     response = AgGrid(
+
         input_dataframe,
         cellStyle = cellsytle_jscode,
         height=grid_height,
