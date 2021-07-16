@@ -170,29 +170,29 @@ col = st.beta_columns(2)
 
 cellsytle_jscode = JsCode("""
 function(params) {
-    return {
-        'color': 'black',
-        'backgroundColor': "#e0e0ef"
+    if (params.value == 'A') {
+        return {
+            'color': 'white',
+            'backgroundColor': 'darkred'
+        }
+    } else if (params.node.rowIndex % 2 === 1)  {
+        return {
+            'color': 'black',
+            'backgroundColor': "#f9f9ff"
+        }        
+    } else {
+        return {
+            'color': 'black',
+            'backgroundColor': "#e0e0ef"
+        }
     }
 };
-function(e) {
-    let api = e.api;
-    let rowIndex = e.rowIndex;
-    let col = e.column.colId;
-    
-    let rowNode = api.getDisplayedRowAtIndex(rowIndex);
-    api.flashCells({
-      rowNodes: [rowNode],
-      columns: [col],
-      flashDelay: 10000000000
-    });
-};
 """)
-
 with col[0]:
     response = AgGrid(
         input_dataframe,
         cellStyle = cellsytle_jscode,
+        onCellValueChanged=js,
         height=grid_height,
         width='100%',
         suppressMenu=True,  # This line removes the filter
