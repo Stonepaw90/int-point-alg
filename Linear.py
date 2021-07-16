@@ -623,7 +623,8 @@ if variable_dict["done"]:
     st.write("# ")
     st.write("""---""")
     st.write("# ")
-    while np.dot(x_full, w) >= epsilon:
+    #while np.dot(x_full, w) >= epsilon:
+    while iter <= len(df):
         diagx = np.diagflat(x_full)
         diagw = np.diagflat(w)
         diagwinv = np.array([1 / i if i != 0 else 0 for i in np.nditer(diagw)]).reshape((n_full, n_full))
@@ -743,7 +744,7 @@ if variable_dict["done"]:
             mu *= gamma
         iter += 1
         st.write("""---""")
-        assert iter <= len(df), "Too many iterations"
+        #assert iter <= len(df), "Too many iterations"
 
     if n_plot == 2:
         if make_plot:
