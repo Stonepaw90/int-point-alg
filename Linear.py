@@ -317,8 +317,6 @@ def round_list(listc, make_tuple=False):
                     listc[i] = float(listc[i][0])
         else: #float or int
             listc[i] = round(listc[i], 4)
-    if make_tuple:
-        print(listc)
     return listc
 
 
@@ -446,22 +444,22 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
         f = x_full.dot(c_full)
         ax = matrix_full.dot(x_full)
         # if not variable_dict["standard"]:
-        # if any([abs(i) > 0.001 for i in (ax - b)]):
-        #    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
-        #    df = pd.DataFrame(data, columns=alist)
-        #    st.markdown("""
-        #        <style>
-        #        table td:nth-child(1) {
-        #            display: none
-        #        }
-        #        table th:nth-child(1) {
-        #            display: none
-        #        }
-        #        </style>
-        #        """, unsafe_allow_html=True)
-        #    # st.dataframe(df)
-        #    st.table(df)
-        #    st.stop()
+        if any([abs(i) > 0.001 for i in (ax - b)]):
+            st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(ax.round(6)) + f"\\neq" + lt(b))
+            df = pd.DataFrame(data, columns=alist)
+            st.markdown("""
+                <style>
+                table td:nth-child(1) {
+                    display: none
+                }
+                table th:nth-child(1) {
+                    display: none
+                }
+                </style>
+                """, unsafe_allow_html=True)
+
+            st.table(df)
+            st.stop()
         if variable_dict["advanced"]:
             if variable_dict["standard"]:  # Advanced, standard
                 data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
@@ -566,14 +564,15 @@ def diagonal_matrix(x):
 
 
 def digit_fix(subs):
-    for i, j in enumerate(subs):
-        if j % 1 == 0:
-            subs[i] = int(j)
-        else:
-            subs[i] = j.round(4)
-            if subs[i] < 0.0001 and subs[i] > -0.0001:
-                subs[i] = 0
-    return (subs)
+    return subs.round(4)
+    #for i, j in enumerate(subs):
+    #    if j % 1 == 0:
+    #        subs[i] = int(j)
+    #    else:
+    #        subs[i] = j.round(4)
+    #        if subs[i] < 0.0001 and subs[i] > -0.0001:
+    #            subs[i] = 0
+    #return (subs)
 
 
 def constraint_string(rowc, b_val):
