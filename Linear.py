@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import sympy
 
-from st_aggrid import AgGrid  # , DataReturnMode, GridUpdateMode, GridOptionsBuilder
+from st_aggrid import AgGrid, JsCode
 
 import matplotlib.pyplot as plt
 from scipy.spatial import HalfspaceIntersection, ConvexHull
@@ -167,18 +167,29 @@ st.markdown("Write your matrix in the top-left of this entry grid. The maximum s
 st.write(
     "Press enter or tab to confirm your edits.")
 col = st.beta_columns(2)
+
+cellsytle_jscode = JsCode("""
+function(params) {
+    return {
+        'color': 'black',
+        'backgroundColor': "#f0f0f5"
+    }
+};
+""")
+
 with col[0]:
     response = AgGrid(
         input_dataframe,
+        cellStyle = cellsytle_jscode,
         height=grid_height,
         width='100%',
         suppressMenu=True,  # This line removes the filter
         editable=True,
-        # filter = False,
+        allow_unsafe_jscode=True,
         sortable=False,
         resizable=True,
         fit_columns_on_grid_load=False,
-        key=matrix_key
+        key=matrix_key,
     )
 # Convert Matrix, catching errors. Errors lead to a stop that prints out the matrix and your matrix shape (m_s, n_s).
 
@@ -277,25 +288,31 @@ def is_neg(x, strict=True):
     else:
         return any([i <= 0 for i in x])
 
+def round_vector(vec,n):
+    #vec must be a np.ndarray or list
+    if type(vec) is np.ndarray:
+        return vec.round(n)
+    else:
+        return [round(i) for i in vec]
 
-def round_list(list, make_tuple=False):
-    for i in range(len(list)):
-        if type(list[i]) is str or type(list[i]) is tuple or type(list[i]) == type(None):
+def round_list(listc, make_tuple=False):
+    #Use only when your list has different things in it.
+    #Useful when list is ints, floats, strings, and np.arrays.
+    for i in range(len(listc)):
+        if type(listc[i]) is str or type(listc[i]) is tuple or type(listc[i]) is None:
             pass
-        elif type(list[i]) is list or type(list[i]) is np.ndarray:
-            try:
-                for j in range(len(list[i])):
-                    list[i][j] = round(list[i][j], 4)
-                if make_tuple:
-                    if len(list[i]) > 1:
-                        list[i] = tuple(list[i])
-                    else:
-                        list[i] = float(list[i][0])
-            except:
-                pass
-        else:
-            list[i] = round(list[i], 4)
-    return list
+        elif type(listc[i]) is list or type(listc[i]) is np.ndarray:
+            listc[i] = round_vector(listc[i], 4)
+            if make_tuple:
+                if len(listc[i]) > 1:
+                    listc[i] = tuple(listc[i])
+                else:
+                    listc[i] = float(listc[i][0])
+        else: #float or int
+            listc[i] = round(listc[i], 4)
+    if make_tuple:
+        print(listc)
+    return listc
 
 
 if variable_dict["done"]:  # Once solve is pressed
@@ -325,7 +342,7 @@ if variable_dict["done"]:  # Once solve is pressed
             st.stop()
         ax = matrix_full.dot(x_full)
         if any([abs(i) > 0.001 for i in (ax - b)]):
-            st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(round_list(ax)) + f"\\neq" + lt(b))
+            st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(ax.round(4)) + f"\\neq" + lt(b))
             st.stop()
             # matrix_full = np.concatenate((matrix_small, np.identity(m_s)), axis=1)
             # x_full = np.concatenate((x,s))
@@ -344,7 +361,7 @@ if variable_dict["done"]:  # Once solve is pressed
         st.latex("A = " + sympy.latex(sympy.Matrix(matrix_full)))
     col = st.beta_columns(5)
     col_helper1 = 0
-    var = [sympy.Matrix(round_list(i)) for i in [b, c_full, w, x_full, y]]
+    var = [sympy.Matrix(i.round(4)) for i in [b, c_full, w, x_full, y]]
     names = ["b", "c", "w", "x", "y"]
     for i in range(5):
         with col[col_helper1 % 5]:
@@ -375,7 +392,7 @@ iter = 0
 data = []
 
 if variable_dict["done"]:  # All branches get here, once data has been verified.
-    variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=True)
+    variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=False)
     mu_e = "{:2.1E}".format(mu)
     ###ITERATION 0 ROW
     if variable_dict["advanced"]:
@@ -384,11 +401,8 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
             alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "s", "y", "w"]
         else:  # Canonical, advanced
-            #data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
-            #alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
-
-            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full], make_tuple=True))
-            alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
+            data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
+            alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
     else:
         if variable_dict["standard"]:  # Not Advanced, and Standard
             data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
@@ -445,8 +459,7 @@ if variable_dict["done"]:  # All branches get here, once data has been verified.
             if variable_dict["standard"]:  # Advanced, standard
                 data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s], s, y, w], make_tuple=True))
             else:  # Advanced, canonical
-                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full], make_tuple=True))
-                #data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
+                data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full, y, w], make_tuple=True))
         else:
             if variable_dict["standard"]:  # Not Advanced, and Standard
                 data.append(round_list([iter, mu_e, x_full.dot(w), f, x_full[:n_s]], make_tuple=True))
@@ -618,11 +631,14 @@ if variable_dict["done"]:
                          "A", "AXW^{-1}A^T",
                          "d^x", "d^y", "d^w"]
         complicated_eq = matrix_full.dot(diagx).dot(diagwinv).dot(matrix_full.T)
-        matrix_list = round_list([np.diagflat([round(i, 4) for i in x_full]), np.diagflat([round(i, 4) for i in w]),
+        matrix_list = [np.diagflat([round(i, 4) for i in x_full]), np.diagflat([round(i, 4) for i in w]),
                                   diagx.dot(diagwinv).round(4),
-                                  # mu * np.ones(n_full), diagx.dot(diagw).dot(np.ones(n_full)), vmu,
                                   None, None, None,
-                                  matrix_full, complicated_eq, dx, dy, dw], False)
+                                  matrix_full.round(4), complicated_eq.round(4), dx.round(4), dy.round(4), dw.round(4)]
+        #matrix_list = [array_round.round(4) for array_round in [np.diagflat(x_full), np.diagflat(w),
+        #                          diagx.dot(diagwinv),
+        #                          None, None, None,
+        #                          matrix_full, complicated_eq, dx, dy, dw] if array_round is not None]
         st.markdown("### $k= " + str(iter) + "$")
         col = st.beta_columns(3)
         for i in range(len(matrix_string)):
@@ -631,9 +647,9 @@ if variable_dict["done"]:
                 pass
             elif i == 5:
                 with col[1]:
-                    muone = lt(round_list(mu * np.ones(n_full)))
-                    xwone = lt(round_list(diagx.dot(diagw).dot(np.ones(n_full))))
-                    vmulatex = lt(round_list(vmu))
+                    muone = lt((mu * np.ones(n_full)).round(4))
+                    xwone = lt((diagx.dot(diagw).dot(np.ones(n_full))).round(4))
+                    vmulatex = lt(vmu.round(4))
                     st.latex("v(\mu) = " + muone + "-"
                              + xwone + "= " + vmulatex)
                 col_help = 0
