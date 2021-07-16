@@ -185,16 +185,16 @@ function(params) {
 """)
 with col[0]:
     response = AgGrid(
-
         input_dataframe,
         cellStyle = cellsytle_jscode,
         height=grid_height,
         width='100%',
         suppressMenu=True,  # This line removes the filter
         editable=True,
+        lockPosition=True,
         allow_unsafe_jscode=True,
         sortable=False,
-        resizable=True,
+        resizable=False,
         fit_columns_on_grid_load=False,
         key=matrix_key,
     )
