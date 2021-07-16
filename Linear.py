@@ -175,6 +175,18 @@ function(params) {
         'backgroundColor': "#e0e0ef"
     }
 };
+function(e) {
+    let api = e.api;
+    let rowIndex = e.rowIndex;
+    let col = e.column.colId;
+    
+    let rowNode = api.getDisplayedRowAtIndex(rowIndex);
+    api.flashCells({
+      rowNodes: [rowNode],
+      columns: [col],
+      flashDelay: 10000000000
+    });
+};
 """)
 
 with col[0]:
