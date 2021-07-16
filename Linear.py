@@ -172,7 +172,7 @@ cellsytle_jscode = JsCode("""
 function(params) {
     return {
         'color': 'black',
-        'backgroundColor': "#92b572"
+        'backgroundColor': "#e0e0ef"
     }
 };
 """)
