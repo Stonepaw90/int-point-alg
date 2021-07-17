@@ -563,18 +563,6 @@ def diagonal_matrix(x):
     return string
 
 
-def digit_fix(subs):
-    return subs.round(4)
-    #for i, j in enumerate(subs):
-    #    if j % 1 == 0:
-    #        subs[i] = int(j)
-    #    else:
-    #        subs[i] = j.round(4)
-    #        if subs[i] < 0.0001 and subs[i] > -0.0001:
-    #            subs[i] = 0
-    #return (subs)
-
-
 def constraint_string(rowc, b_val):
     # rowc is a list. Like [4.0, 3.0, 1, 2]
     # b is the <= list. Like [11, 4]
@@ -727,14 +715,14 @@ if variable_dict["done"]:
         st.latex(l_string)
         col = st.beta_columns(3)
         with col[0]:
-            st.latex("x^{new} =" + lt(digit_fix(x_full)) + "+" + str(round(betap, 4)) + lt(digit_fix(dx)) + " = " + lt(
-                digit_fix(x_full + betap * dx)))
+            st.latex("x^{new} =" + lt(x_full.round(4)) + "+" + str(round(betap, 4)) + lt(dx.round(4)) + " = " + lt(
+                (x_full + betap * dx).round(4)))
         with col[1]:
-            st.latex("y^{new} =" + lt(digit_fix(y)) + "+" + str(round(betad, 4)) + lt(digit_fix(dy)) + " = " + lt(
-                digit_fix(y + betad * dy)))
+            st.latex("y^{new} =" + lt(y.round(4)) + "+" + str(round(betad, 4)) + lt(dy.round(4)) + " = " + lt(
+                (y + betad * dy).round(4)))
         with col[2]:
-            st.latex("w^{new} =" + lt(digit_fix(w)) + "+" + str(round(betad, 4)) + lt(digit_fix(dw)) + " = " + lt(
-                digit_fix(w + betad * dw)))
+            st.latex("w^{new} =" + lt(w.round(4)) + "+" + str(round(betad, 4)) + lt(dw.round(4)) + " = " + lt(
+                (w + betad * dw).round(4)))
         x_full += betap * dx
         y += betad * dy
         w += betad * dw
