@@ -6,5 +6,5 @@ Thanks to streamlit creator ash2shukla for [how to write a nice table](https://d
 
 Big thanks to my brother [Ben](https://github.com/TheBengineer) for helping me code the columns in the detailed numeric output!
 
-Thanks to Dr. Michael Veatch for polishing this with me, over and over again
+Thanks to Dr. Michael Veatch for polishing this with me, over and over again.
 
