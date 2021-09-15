@@ -102,7 +102,7 @@ def plot_inequalities(A, b, bbox, ax=None):
 
 variable_dict = {"advanced": False, "update 11.26": False, "standard": False, "done": False, "ex 11.7": False}
 
-st.title("Interior Point Algorithm for Linear Programs (Sept. 15)")
+st.title("Interior Point Algorithm for Linear Programs")
 st.markdown('''
 ### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:
 ''')
