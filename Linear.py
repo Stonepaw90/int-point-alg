@@ -1,6 +1,7 @@
 from helpers import *
 
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
 
 # Source code is here https://github.com/Stonepaw90/int-point-alg
@@ -25,7 +26,7 @@ class LinearProgram:
     def __init__(self):
         self.constraint_slider = False
         self.variable_dict = {"advanced": False, "update 11.26": False, "standard": False, "done": False,
-                              "ex 11.7": False, "precision":4}
+                              "ex 11.7": False, "precision":3}
 
     def get_rounding_function(self):
         return lambda x: round(x, self.variable_dict["precision"])
@@ -522,8 +523,8 @@ class LinearProgram:
                     with boundaries:
                         st.write("The entries of the vector **x** are called x and y in the graph.")
                         st.subheader("Enter the plot boundaries:")
-                        x_range = st.text_input("Enter x range (e.g., -5, 5)", "0,10")
-                        y_range = st.text_input("Enter y range (e.g., -5, 5)", "0,10")
+                        x_range = st.text_input("Enter the x-axis range in the format '-5,5'", "0,10")
+                        y_range = st.text_input("Enter the y-axis range in the format '-5,5'", "0,10")
 
                         # Convert input to numbers
                         try:
@@ -545,38 +546,42 @@ class LinearProgram:
                         ax = plt.axes()
                         if self.variable_dict['standard']:
                             plot_inequalities(self.A[:, :2], self.b, bbox, ax=ax)
-                        if self.constraint_slider:
-                            obj = slider.slider("Objective function value", min_value=0.0,
-                                                max_value=round(df['Objective'][len(df) - 1] + 5, 1), step=0.1)
-                            if obj > 0:
-                                ax.plot([0, obj / c[0]], [obj / c[1], 0], "r-")
-                        go = ax.plot(*df['x'][0][:2], 'go', label="Initial point")
+
+                        legend_objs = []
+                        legend_labels = []
+                        legend_objs.append(mlines.Line2D([0], [0], color='g', marker='o', markerfacecolor='g', markeredgewidth=2,
+                                             lw=0, label="Initial Point"))
+                        legend_labels.append("Initial Point")
 
                         for i in range(len(df['x']) - 1):
-                            bo = ax.plot(*df['x'][i + 1][:2], 'bo', label="Improving Point")
                             ax.plot([df['x'][i][0], df['x'][i + 1][0]], [df['x'][i][1], df['x'][i + 1][1]], 'k-')
+                            bo = ax.plot(*df['x'][i + 1][:2], 'bo', label="Improving Point")
+                        #legend_objs.append(mlines.Line2D([0], [0], color='b', marker='o', markeredgewidth=2,
+                        #                     lw=0, label="Intermediate Point"))
+                        #legend_labels.append("Intermediate Point")
                         go = ax.plot(*df['x'][0][:2], 'go', label="Initial point")
-                        # ro = ax.plot(*df['x'][i+1][:2], 'ro', label = "Epsilon-optimal Point")
-                        legend_l = []
+                        ro = ax.plot(*df['x'][i+1][:2], 'ro', label = "Epsilon-optimal Point")
+                        legend_objs.append(mlines.Line2D([0], [0], color='r', marker='o', markeredgewidth=2,
+                                             lw=0, label="Stopping Point"))
+                        legend_labels.append("Stopping Point")
                         for i in range(self.m_s):
                             row_con = self.A[i]
-                            legend_l.append(constraint_string(row_con, self.b[i]))
-                        if self.constraint_slider:
-                            if obj > 0:
-                                legend_l.append(constraint_string(self.c[:2], obj))
-                        legend_l.append("Initial")
+                            legend_objs.append(mlines.Line2D([0, 1], [0, 0], color='black', lw=2))
+                            legend_labels.append(constraint_string(row_con, self.b[i]))
+                        #legend_l.append("Initial")
                         # legend_l.append("Improving")
                         # legend_l.append("Epsilon-optimal")
                         plt.xlabel("x")
                         plt.ylabel("y")
                         if legend_show:
                             if self.variable_dict['ex 11.7']:
-                                ax.legend(legend_l, loc="upper right")
+                                ax.legend(handles = legend_objs, labels = legend_labels, loc="upper right")
                             else:
-                                ax.legend(legend_l)
+                                ax.legend(handles = legend_objs, labels = legend_labels)
                         plot_space.pyplot(fig)
-                    except:
+                    except Exception as e:
                         plot_space.header("Plotting failed.")
+                        plot_space.write(f"Error: {e}")
 
 
     def run(self):
@@ -588,6 +593,29 @@ class LinearProgram:
         self.run_iterations()
         self.plot_iterations()
 
+def plot_constraint(ax, row_con, label, color):
+    # Plot the constraint and add it to the legend
+    ax.plot([0, 10], [0, 10], color=color)  # Adjust this line to plot the constraint
+    return mlines.Line2D([0], [0], color=color, lw=2, label=label)
+
+def plot_initial_point(ax, point):
+    # Plot the initial point and return the legend entry
+    ax.plot(*point, 'go', label="Initial point")
+    return mlines.Line2D([0], [0], color='g', marker='o', markerfacecolor='g', markeredgewidth=2, lw=0, label="Initial Point")
+
+def plot_subsequent_points(ax, points):
+    # Plot subsequent points and return the legend entry
+    for i in range(len(points) - 1):
+        ax.plot(*points[i + 1][:2], 'bo', label="Improving Point")
+        ax.plot([points[i][0], points[i + 1][0]], [points[i][1], points[i + 1][1]], 'k-')
+    return mlines.Line2D([0], [0], color='b', marker='o', markerfacecolor='b', markeredgewidth=2, lw=0, label="Subsequent Points")
+
+def plot_objective_function(ax, obj, c):
+    # Plot the objective function line (if applicable) and add it to the legend
+    if obj > 0:
+        ax.plot([0, obj / c[0]], [obj / c[1], 0], "r-")
+        return mlines.Line2D([0], [0], color='r', lw=2, label=constraint_string(c[:2], obj))
+    return None
 
 def run():
     lp = LinearProgram()
