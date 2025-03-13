@@ -144,21 +144,21 @@ def round_vector(vec,n):
     else:
         return [round(i) for i in vec]
 
-def round_list(listc, make_tuple=False):
+def round_list(listc, make_tuple=False, prec = 4):
     #Use only when your list has different things in it.
     #Useful when list is ints, floats, strings, and np.arrays.
     for i in range(len(listc)):
         if type(listc[i]) is str or type(listc[i]) is tuple or type(listc[i]) is None:
             pass
         elif type(listc[i]) is list or type(listc[i]) is np.ndarray:
-            listc[i] = round_vector(listc[i], 4)
+            listc[i] = round_vector(listc[i], prec)
             if make_tuple:
                 if len(listc[i]) > 1:
                     listc[i] = tuple(listc[i])
                 else:
                     listc[i] = float(listc[i][0])
         else: #float or int
-            listc[i] = round(listc[i], 4)
+            listc[i] = round(listc[i], prec)
     return listc
 
 

@@ -73,7 +73,7 @@ class LinearProgram:
 
     def update_attributes(self):
         self.variable_dict['standard'] = st.toggle("Standard form", value=False)
-        self.variable_dict['precision'] = st.number_input("How many digits of precision would you like?", value=self.variable_dict['precision'])
+        self.variable_dict['precision'] = st.sidebar.number_input("How many digits of precision would you like? A lower number can prevent overlapping equations.", value=self.variable_dict['precision'])
         if self.variable_dict["standard"]:
             self.variable_dict["ex 11.7"] = st.toggle("Load Example 11.7", value=False)
         if self.variable_dict["ex 11.7"]:
@@ -176,8 +176,8 @@ class LinearProgram:
             self.variable_dict["done"] = st.checkbox("Solve")
 
     def solve(self):
-        r = self.get_rounding_function(self)
-        nr = self.get_numpy_rounding_function(self)
+        r = self.get_rounding_function()
+        nr = self.get_numpy_rounding_function()
         if self.variable_dict["done"]:
             if self.variable_dict["standard"]:
                 st.header("After converting to canonical form, the data and initial solutions are:")
@@ -200,7 +200,7 @@ class LinearProgram:
                     st.stop()
                 ax = self.A.dot(self.x)
                 if any([abs(i) > 0.001 for i in (ax - self.b)]):
-                    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(ax.round(4)) + f"\\neq" + lt(self.b))
+                    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(nr(ax)) + f"\\neq" + lt(self.b))
                     st.stop()
             try:
                 self.w = self.A.T.dot(self.y) - self.c
@@ -215,7 +215,7 @@ class LinearProgram:
                 st.latex("A = " + sympy.latex(sympy.Matrix(self.A)))
             col = st.columns(5)
             col_helper1 = 0
-            var = [sympy.Matrix(i.round(4)) for i in [self.b, self.c, self.w, self.x, self.y]]
+            var = [sympy.Matrix(nr(i)) for i in [self.b, self.c, self.w, self.x, self.y]]
             names = ["b", "c", "w", "x", "y"]
             for i in range(5):
                 with col[col_helper1 % 5]:
@@ -242,6 +242,8 @@ class LinearProgram:
     def run_iterations(self):
         iter = 0
         data = []
+        r = self.get_rounding_function()
+        nr = self.get_numpy_rounding_function()
 
         if self.variable_dict["done"]:
             self.variable_dict['advanced'] = st.checkbox("Show slacks and dual values", value=False)
@@ -251,19 +253,24 @@ class LinearProgram:
                 if self.variable_dict["standard"]:
                     data.append(round_list(
                         [iter, mu_e, self.x.dot(self.w), self.f, self.x[:self.n_s], self.s, self.y, self.w],
-                        make_tuple=True))
+                        make_tuple=True,
+                        prec = self.variable_dict["precision"]
+                    ))
                     alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "s", "y", "w"]
                 else:
                     data.append(round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x, self.y, self.w],
-                                           make_tuple=True))
+                                           make_tuple=True,
+                                           prec = self.variable_dict["precision"]))
                     alist = ["k", "mu", "Gap x^Tw", "Objective", "x", "y", "w"]
             else:
                 if self.variable_dict["standard"]:
                     data.append(round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x[:self.n_s]],
-                                           make_tuple=True))
+                                           make_tuple=True,
+                                           prec = self.variable_dict["precision"]))
                     alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
                 else:
-                    data.append(round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x], make_tuple=True))
+                    data.append(round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x],
+                                           make_tuple=True, prec = self.variable_dict["precision"]))
                     alist = ["k", "mu", "Gap x^Tw", "Objective", "x"]
 
             while np.dot(self.x, self.w) >= self.epsilon:
@@ -307,7 +314,7 @@ class LinearProgram:
                 ax = self.A.dot(self.x)
 
                 if any([abs(i) > 0.001 for i in (ax - self.b)]):
-                    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(ax.round(6)) + f"\\neq" + lt(self.b))
+                    st.latex(f"Ax \\neq b, \hspace{{8px}} " + lt(nr(ax)) + f"\\neq" + lt(self.b))
                     df = pd.DataFrame(data, columns=alist)
                     st.markdown("""
                         <style>
@@ -326,18 +333,18 @@ class LinearProgram:
                     if self.variable_dict["standard"]:
                         data.append(round_list(
                             [iter, mu_e, self.x.dot(self.w), self.f, self.x[:self.n_s], self.s, self.y,
-                             self.w], make_tuple=True))
+                             self.w], make_tuple=True, prec = self.variable_dict["precision"]))
                     else:
                         data.append(
                             round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x, self.y, self.w],
-                                       make_tuple=True))
+                                       make_tuple=True, prec = self.variable_dict["precision"]))
                 else:
                     if self.variable_dict["standard"]:
                         data.append(round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x[:self.n_s]],
-                                               make_tuple=True))
+                                               make_tuple=True, prec = self.variable_dict["precision"]))
                     else:
                         data.append(
-                            round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x], make_tuple=True))
+                            round_list([iter, mu_e, self.x.dot(self.w), self.f, self.x], make_tuple=True, prec = self.variable_dict["precision"]))
 
                 if iter >= 15:
                     st.write(
@@ -360,6 +367,8 @@ class LinearProgram:
             self.df = df
 
     def plot_iterations(self):
+        r = self.get_rounding_function()
+        nr = self.get_numpy_rounding_function()
         if self.variable_dict["done"]:
             if self.n_plot == 2:
                 make_plot = st.checkbox("Graph feasible region and iterations.")
@@ -397,10 +406,10 @@ class LinearProgram:
 
                 matrix_string = ["X", "W", "XW^{-1}", None, None, "v(\\mu)", "A", "AXW^{-1}A^T", "d^x", "d^y", "d^w"]
                 complicated_eq = self.A.dot(diagx).dot(diagwinv).dot(self.A.T)
-                matrix_list = [np.diagflat([round(i, 4) for i in x]), np.diagflat([round(i, 4) for i in w]),
-                               diagx.dot(diagwinv).round(4), None, None, None,
-                               self.A.round(4), complicated_eq.round(4), dx.round(4), dy.round(4),
-                               dw.round(4)]
+                matrix_list = [np.diagflat([r(i) for i in x]), np.diagflat([r(i) for i in w]),
+                               nr(diagx.dot(diagwinv)), None, None, None,
+                               nr(self.A), nr(complicated_eq), nr(dx), nr(dy),
+                               nr(dw)]
 
                 st.markdown("### $k= " + str(iter) + "$")
                 col = st.columns(3)
@@ -411,9 +420,9 @@ class LinearProgram:
                         pass
                     elif i == 5:
                         with col[1]:
-                            muone = lt((mu * np.ones(self.n_full)).round(4))
-                            xwone = lt((diagx.dot(diagw).dot(np.ones(self.n_full))).round(4))
-                            vmulatex = lt(vmu.round(4))
+                            muone = lt(nr(mu * np.ones(self.n_full)))
+                            xwone = lt(nr(diagx.dot(diagw).dot(np.ones(self.n_full))))
+                            vmulatex = lt(nr(vmu))
                             st.latex("v(\mu) = " + muone + "-" + xwone + "= " + vmulatex)
                         col_help = 0
                     elif i in [0, 1, 2, 6, 7]:
@@ -421,21 +430,21 @@ class LinearProgram:
                             if i == 6:
                                 if self.m_s < 6:
                                     st.latex(
-                                        matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
+                                        matrix_string[7] + "=" + sympy.latex(sympy.Matrix(nr(complicated_eq))))
                                     col_help += 2
                                 else:
                                     with col[1]:
                                         st.latex(
-                                            matrix_string[7] + "=" + sympy.latex(sympy.Matrix(complicated_eq.round(4))))
+                                            matrix_string[7] + "=" + sympy.latex(sympy.Matrix(nr(complicated_eq))))
                             elif i == 7:
                                 if self.m_s < 6:
                                     st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
-                                        sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
+                                        sympy.Matrix(nr(np.linalg.inv(complicated_eq)))))
                                     col_help += 1
                                 else:
                                     with col[1]:
                                         st.latex("(" + matrix_string[7] + ")^{-1}=" + sympy.latex(
-                                            sympy.Matrix(np.linalg.inv(complicated_eq).round(4))))
+                                            sympy.Matrix(nr(np.linalg.inv(complicated_eq)))))
                                     col_help = 0
                             elif self.n_full < 6:
                                 st.latex(matrix_string[i] + "=" + diagonal_matrix(matrix_list[i]))
@@ -463,10 +472,10 @@ class LinearProgram:
                 optiond = min(
                     [self.alpha * j for j in [-w[i] / dw[i] if dw[i] < 0 else 100 for i in range(self.n_full)]])
 
-                x_r = [round(i, 4) for i in x]
-                dx_r = [round(i, 4) for i in dx]
-                dw_r = [round(i, 4) for i in dw]
-                w_r = [round(i, 4) for i in w]
+                x_r = list(map(r,x))
+                dx_r = list(map(r,dx)) #[round(i, 4) for i in dx]
+                dw_r = list(map(r,dw)) #[round(i, 4) for i in dw]
+                w_r = list(map(r,w)) #[round(i, 4) for i in w]
                 betap = min(1, optionp)
                 betad = min(1, optiond)
 
@@ -475,7 +484,7 @@ class LinearProgram:
                     if dx_r[i] < 0:
                         l_string += "\\frac{" + str(x_r[i]) + "}{" + str(-dx_r[i]) + "},"
                 l_string = l_string[
-                           :-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optionp, 4)}" + "\\} = " + f"{round(betap, 4)}"
+                           :-1] + "\\}\\} = \\text{min}\\{1, " + f"{r(optionp)}" + "\\} = " + f"{r(betap)}"
                 st.latex(l_string)
 
                 l_string = "\\beta_D = \\text{min}\\{1, 0.9*\\text{min}\\{ "
@@ -483,20 +492,20 @@ class LinearProgram:
                     if dw_r[i] < 0:
                         l_string += "\\frac{" + str(w_r[i]) + "}{" + str(-dw_r[i]) + "},"
                 l_string = l_string[
-                           :-1] + "\\}\\} = \\text{min}\\{1, " + f"{round(optiond, 4)}" + "\\} = " + f"{round(betad, 4)}"
+                           :-1] + "\\}\\} = \\text{min}\\{1, " + f"{r(optiond)}" + "\\} = " + f"{r(betad)}"
                 st.latex(l_string)
 
                 col = st.columns(3)
                 with col[0]:
                     st.latex(
-                        "x^{new} =" + lt(x.round(4)) + "+" + str(round(betap, 4)) + lt(dx.round(4)) + " = " + lt(
-                            (x + betap * dx).round(4)))
+                        "x^{new} =" + lt(nr(x)) + "+" + str(r(betap)) + lt(nr(dx)) + " = " + lt(
+                            nr(x + betap * dx)))
                 with col[1]:
-                    st.latex("y^{new} =" + lt(y.round(4)) + "+" + str(round(betad, 4)) + lt(dy.round(4)) + " = " + lt(
-                        (y + betad * dy).round(4)))
+                    st.latex("y^{new} =" + lt(nr(y)) + "+" + str(r(betad)) + lt(nr(dy)) + " = " + lt(
+                        nr(y + betad * dy)))
                 with col[2]:
-                    st.latex("w^{new} =" + lt(w.round(4)) + "+" + str(round(betad, 4)) + lt(dw.round(4)) + " = " + lt(
-                        (w + betad * dw).round(4)))
+                    st.latex("w^{new} =" + lt(nr(w)) + "+" + str(r(betad)) + lt(nr(dw)) + " = " + lt(
+                        nr(w + betad * dw)))
 
                 x += betap * dx
                 y += betad * dy
@@ -511,13 +520,24 @@ class LinearProgram:
             if self.n_plot == 2:
                 if make_plot:
                     with boundaries:
+                        st.write("The entries of the vector **x** are called x and y in the graph.")
                         st.subheader("Enter the plot boundaries:")
-                        x1, x2 = st.slider("Select x-axis range", 0.0, 10.0, (0.0, 10.0), key = "xboundaries")
-                        y1, y2 = st.slider("Select y-axis range", 0.0, 10.0, (0.0, 10.0), key = "yboundaries")
+                        x_range = st.text_input("Enter x range (e.g., -5, 5)", "0,10")
+                        y_range = st.text_input("Enter y range (e.g., -5, 5)", "0,10")
+
+                        # Convert input to numbers
+                        try:
+                            x1, x2 = map(float, x_range.split(","))
+                            y1, y2 = map(float, y_range.split(","))
+                        except ValueError:
+                            st.error("Please enter values in the format: min,max")
+                        #x1, x2 = st.slider("Select x-axis range", 0.0, 10.0, (0.0, 10.0), key = "xboundaries")
+                        #y1, y2 = st.slider("Select y-axis range", 0.0, 10.0, (0.0, 10.0), key = "yboundaries")
                     legend_show = legend_print.checkbox("Show legend?", True)
 
                     try:
                         df = self.df
+                        c = self.c
                         #bbox = [float(i.strip("][").split(" ")[0]) for i in bbox.split(",")]
                         #bbox = [bbox[0:2], bbox[2:]]
                         bbox = [[x1, x2], [y1, y2]]
