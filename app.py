@@ -10,7 +10,7 @@ st.set_page_config(page_title="Linear Interior Point Algorithm", layout="wide",
 delete_page = st.Page("Linear.py", title="Linear", icon=":material/bedtime:")
 create_page = st.Page("Convex.py", title="Convex", icon=":material/show_chart:")
 
-pg = st.navigation([create_page, delete_page])
+pg = st.navigation([delete_page, create_page])
 pg.run()
 
 # Sidebar for page selection
