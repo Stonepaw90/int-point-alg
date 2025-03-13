@@ -15,22 +15,22 @@ def run():
     # Carefully put your variables, functions, and constraints here.
     #st.sidebar.button("Re Run")
     st.sidebar.header("Parameters")
-    st.sidebar.write(r"""$\alpha$: Step size Multiplier.""")
-    alpha = st.sidebar.number_input(r"$\alpha$", value = 0.8, step=0.01,min_value = 0.0, max_value = 0.999, help = r"""Each dual variable is reduced by no more than a factor of $1 - \alpha$.""")
+    alpha = st.sidebar.number_input(r"$\alpha$: Step size Multiplier.", value = 0.8, step=0.01,min_value = 0.0, max_value = 0.999, help = r"""Each dual variable is reduced by no more than a factor of $1 - \alpha$.""")
     #st.sidebar.markdown("""---""")
-    st.sidebar.write(r"$\beta$: Backtracking multiplier.")
-    beta = st.sidebar.number_input(r"$\beta$", value = 0.9, step=0.01,min_value = 0.0, max_value = 0.999, help = r"If a constraint is violated, the step size is multiplied by $\beta$.")
+    beta = st.sidebar.number_input(r"$\beta$: Backtracking multiplier.", value = 0.9, step=0.01,min_value = 0.0, max_value = 0.999, help = r"If a constraint is violated, the step size is multiplied by $\beta$.")
     #st.sidebar.markdown("""---""")
-    st.sidebar.write("""$\epsilon$: Stopping criterion.""")
-    epsilon = st.sidebar.number_input(r"$\epsilon$", value = 0.001, step=0.001, format="%f", min_value = 0.00001, help = r"""Stop the algorithm once $\lambda||d^x|| < \epsilon$.""")
+    epsilon = st.sidebar.number_input(r"$\epsilon$: Stopping criterion.", value = 0.001, step=0.001, format="%f", min_value = 0.00001, help = r"""Stop the algorithm once $\lambda||d^x|| < \epsilon$.""")
     #st.sidebar.markdown("""---""")
-    st.sidebar.write("""$\gamma$: Duality gap.""")
-    gamma = st.sidebar.number_input(r"$\gamma$", value = 0.1, step=0.01, help = r"""The complimentary slackness constraint violation $\mu$ is multiplied by $\gamma$ each iteration.""")
+    gamma = st.sidebar.number_input(r"$\gamma$: Duality gap.", value = 0.1, step=0.01, help = r"""The complimentary slackness constraint violation $\mu$ is multiplied by $\gamma$ each iteration.""")
     #st.sidebar.markdown("""---""")
     variable_dict["shortcut"] = st.sidebar.checkbox(label="""For example 9: Use ratio test (not backtracking). If the ratio test is used, when the step
      lambda_max violates the constraint, it is reduced to satisfy the contraint with equality.""")
     st.title("Primal-dual Interior Point Algorithm for Convex Programs")
-    st.markdown("### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:")
+    st.markdown('''
+    #### Based on *[Convex and Linear Optimization](https://www.wiley.com/go/veatch/convexandlinearoptimization)* by [Mike Veatch](https://www.gordon.edu/michaelveatch)  
+    #### See more apps by [Abraham Holleran](https://github.com/Stonepaw90)
+    ''')
+    #st.markdown("### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:")
     #st.header("By Abraham Holleran")
     #st.write(
     #    "Written from the book [Linear and Convex Optimization](https://www.wiley.com/go/veatch/convexandlinearoptimization) under the supervision of the author, Dr. Michael Veatch.")
@@ -67,16 +67,16 @@ def run():
         #while not (variable_dict["feasible"] and variable_dict["pos"]):
         variable_dict["feasible"] = False
         variable_dict["pos"] = False
-        col1.write(r"""$x_1$""")
+        #col1.write(r"""$x_1$""")
         x1_input = col1.number_input(value = 0.5, label = r"$x_1$", key = "x1")
-        col2.write(r"""$x_2$""")
+        #col2.write(r"""$x_2$""")
         x2_input = col2.number_input(value = 0.6, label = r"$x_2$", key = "x2")
-        col3.write(r"""$y_1 > 0$""")
-        y1_input = col3.number_input(value = 5.0, label = r"$y_1$", min_value = 0.0001, key = "y1")
-        col4.write(r"""$y_2 > 0$""")
-        y2_input = col4.number_input(value = 10.0, label = r"$y_2$", min_value = 0.0001, key = "y2")
-        col5.write(r"""$\mu > 0$""")
-        mu_input = col5.number_input(value = 1.0, label = r"$\mu$", min_value=0.001, key = "mu")
+        #col3.write(r"""$y_1 > 0$""")
+        y1_input = col3.number_input(value = 5.0, label = r"$y_1 > 0$", min_value = 0.0001, key = "y1")
+        #col4.write(r"""$y_2 > 0$""")
+        y2_input = col4.number_input(value = 10.0, label = r"$y_2 > 0$", min_value = 0.0001, key = "y2")
+        #col5.write(r"""$\mu > 0$""")
+        mu_input = col5.number_input(value = 1.0, label = r"$\mu > 0$", min_value=0.001, key = "mu")
         mu_value = float(mu_input)
         point = [x1_input,x2_input, y1_input, y2_input]
 
@@ -103,12 +103,12 @@ def run():
         point = [1, 1]
         s = [1]
         error_found = not all([i >= 0 for i in s])
-        col11.write(r"""$x$""")
+        #col11.write(r"""$x$""")
         x_input = col11.number_input(value = 1.0, label = r"$x$", key = "x")
-        col12.write(r"""$y > 0$""")
-        y_input = col12.number_input(value = 0.5, label = r"$y$", key = "y", min_value=0.001)
-        col13.write(r"""$\mu > 0$""")
-        mu_input = col13.number_input(value = 2.0, label = r"$\mu$", min_value = 0.0, key = "mu2")
+        #col12.write(r"""$y > 0$""")
+        y_input = col12.number_input(value = 0.5, label = r"$y > 0$", key = "y", min_value=0.001)
+        #col13.write(r"""$\mu > 0$""")
+        mu_input = col13.number_input(value = 2.0, label = r"$\mu > 0$", min_value = 0.0, key = "mu2")
         point = [float(x_input), float(y_input)]
         mu_value = float(mu_input)
 
@@ -223,9 +223,12 @@ def run():
 
     st.table(df)
     #st.table(df)
-    st.write("""We stopped after iteration """, str(k), """ as $\lambda \mid \mid \\textbf{d}^x\mid \mid <
-     \epsilon$, indeed, """, str(round(dnorm, 4)),
-             """$<$""", str(epsilon), ".")
+    st.latex(rf"""
+    \text{{We stopped after iteration }} {k} 
+    \text{{ as }} \lambda \| \textbf{{d}}^x \| < \epsilon, 
+    \text{{ indeed, }} {round(dnorm, 4)} < {epsilon}.
+    """)
+
     if st.button("Show equations."):
         columns = st.columns(2)
         col_help2 = 0

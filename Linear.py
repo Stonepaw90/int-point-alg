@@ -25,14 +25,24 @@ class LinearProgram:
     def __init__(self):
         self.constraint_slider = False
         self.variable_dict = {"advanced": False, "update 11.26": False, "standard": False, "done": False,
-                              "ex 11.7": False}
+                              "ex 11.7": False, "precision":4}
+
+    def get_rounding_function(self):
+        return lambda x: round(x, self.variable_dict["precision"])
+
+    def get_numpy_rounding_function(self):
+        return lambda x: x.round(self.variable_dict["precision"])
 
 
     def print_intro(self):
         st.title("Interior Point Algorithm for Linear Programs")
-        st.markdown('''### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:''')
+        #st.markdown('''### Coded by [Abraham Holleran](https://github.com/Stonepaw90) :sunglasses:''')
+        st.markdown('''
+        #### Based on *[Convex and Linear Optimization](https://www.wiley.com/go/veatch/convexandlinearoptimization)* by [Mike Veatch](https://www.gordon.edu/michaelveatch)  
+        #### See more apps by [Abraham Holleran](https://github.com/Stonepaw90)
+        ''')
         st.write(
-            "This website uses [Algorithm 11.3](https://www.wiley.com/go/veatch/convexandlinearoptimization) (Primal-dual path following) to solve a linear program in canonical form."
+            "This website uses the Primal-dual path following algorithm ([Algorithm 11.3](https://www.wiley.com/go/veatch/convexandlinearoptimization)) to solve a linear program in canonical form."
             " If the problem is entered in standard form, it is converted to canonical form. For two-variable problems, the feasible region and solutions are graphed.")
         st.header("Standard and canonical form notation")
         st.markdown("The canonical form problem has $m$ constraints and $n$ variables:")
@@ -60,8 +70,10 @@ class LinearProgram:
             "Strict feasibility for the primal requires $\\bar{x}>0, s>0$. Strict feasibility for the dual requires $w > 0$.")
         st.write("Enter the problem, strictly feasible initial solutions, and parameters.")
 
+
     def update_attributes(self):
         self.variable_dict['standard'] = st.toggle("Standard form", value=False)
+        self.variable_dict['precision'] = st.number_input("How many digits of precision would you like?", value=self.variable_dict['precision'])
         if self.variable_dict["standard"]:
             self.variable_dict["ex 11.7"] = st.toggle("Load Example 11.7", value=False)
         if self.variable_dict["ex 11.7"]:
@@ -78,11 +90,11 @@ class LinearProgram:
             with col2:
                 self.n_s = st.number_input(r'$n$: The number of variables.', min_value=1, value=2)
             st.markdown(
-                        "In canonical form, this program cannot handle redundant constraints. Please ensure that the number of rows $m$ $\leq$ the number of columns $n$.")
+                        r"In canonical form, this program cannot handle redundant constraints. Please ensure that the number of rows $m$ $\leq$ the number of columns $n$.")
 
             if not self.variable_dict["standard"]:
                 if not self.m_s <= self.n_s:
-                    st.error(f"In canonical form, ensure $m \leq n$.")
+                    st.error(fr"In canonical form, ensure $m \leq n$.")
 
             self.A = pd.DataFrame(np.zeros((self.m_s, self.n_s)), columns=[f'Var{i + 1}' for i in range(self.n_s)],
                                   index=[f'Con{i + 1}' for i in range(self.m_s)])
@@ -150,10 +162,10 @@ class LinearProgram:
             col = st.columns(2)
             with col[0]:
                 st.write(r"""$\alpha$: Step size parameter.""")
-                self.alpha = st.number_input(r"$\alpha$", value=0.9, step=0.01, min_value=0.0, max_value=0.999,
+                self.alpha = st.number_input(r"$\alpha$: Step size parameter.", value=0.9, step=0.01, min_value=0.0, max_value=0.999,
                                         help=r"""Ensures each variable is reduced by no more than a factor of $1 - \alpha$. $\hspace{13px} 0 < \alpha < 1$""")
-                st.write("""$\gamma$: Duality gap parameter.""")
-                self.gamma = st.number_input(r"$\gamma$", value=0.25, step=0.01,
+                #st.write("""$\gamma$: Duality gap parameter.""")
+                self.gamma = st.number_input(r"$\gamma$: Duality gap parameter", value=0.25, step=0.01,
                                         help=r"""The complimentary slackness parameter $\mu$ is multiplied by $\gamma$ each iteration such that $\mu \rightarrow 0$. $\hspace{13px} 0 < \gamma < 1$""")
             with col[1]:
                 st.write("""$\epsilon$: Optimality tolerance.""")
@@ -164,6 +176,8 @@ class LinearProgram:
             self.variable_dict["done"] = st.checkbox("Solve")
 
     def solve(self):
+        r = self.get_rounding_function(self)
+        nr = self.get_numpy_rounding_function(self)
         if self.variable_dict["done"]:
             if self.variable_dict["standard"]:
                 st.header("After converting to canonical form, the data and initial solutions are:")
